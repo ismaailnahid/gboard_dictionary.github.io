@@ -281,13 +281,23 @@
     }
 
     /* Actions Grid */
-    .actions-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 10px;
-        margin: 16px 0;
-    }
+/* Actions Grid - Enhanced Responsive Behavior */
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+    gap: 10px;
+    margin: 16px 0;
+    width: 100%;
+}
 
+.actions-grid .btn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 44px;
+    font-size: 0.9rem;
+    padding: 10px 12px;
+}
     /* Input Groups */
     .input-group {
         display: flex;
@@ -698,10 +708,16 @@
             font-size: 0.85rem;
         }
         
-        .actions-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
+.actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr));
+        gap: 8px;
+    }
+    
+    .actions-grid .btn {
+        font-size: 0.85rem;
+        padding: 8px 10px;
+        min-height: 42px;
+    }
         
         .input-group {
             gap: 8px;
@@ -826,10 +842,16 @@
             border-radius: 8px;
         }
         
-        .actions-grid {
-            grid-template-columns: 1fr;
-            gap: 8px;
-        }
+.actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr));
+        gap: 8px;
+    }
+    
+    .actions-grid .btn {
+        font-size: 0.8rem;
+        padding: 8px 10px;
+        min-height: 40px;
+    }
         
         .input-group {
             flex-direction: column;
@@ -1023,7 +1045,18 @@
         #preview {
             max-height: 200px;
         }
+
+.actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(90px, 100%), 1fr));
+        gap: 4px;
     }
+    
+    .actions-grid .btn {
+        font-size: 0.7rem;
+        padding: 4px 6px;
+        min-height: 36px;
+    }
+}
 
     /* Touch device improvements */
     @media (hover: none) and (pointer: coarse) {
