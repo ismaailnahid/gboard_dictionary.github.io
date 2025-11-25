@@ -144,6 +144,7 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+        flex-wrap: wrap;
     }
 
     .header {
@@ -297,6 +298,7 @@
         font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         line-height: 1.4;
         font-size: 14px;
+        color: #0da271;
 
     }
 
@@ -363,6 +365,8 @@
     gap: 10px;
     margin: 16px 0;
     width: 100%;
+
+    
 }
 
 .actions-grid .btn {
@@ -432,7 +436,7 @@
     }
 
     #preview .value {
-        color: var(--text);
+color: #0da271;
         font-size: 13px;
         word-break: break-word;
     }
@@ -890,7 +894,7 @@
         }
         
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             margin-bottom: 6px;
         }
         
@@ -899,7 +903,8 @@
         }
         
         .tabs {
-            flex-direction: column;
+            flex-direction: row;
+            flex-wrap: wrap;
             gap: 2px;
             border-bottom: none;
         }
@@ -920,18 +925,23 @@
         }
         
 .actions-grid {
-        grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr));
+display: flex;
+flex-direction: row;
+flex-wrap: wrap;
+
         gap: 8px;
     }
     
     .actions-grid .btn {
         font-size: 0.8rem;
         padding: 8px 10px;
-        min-height: 40px;
+        min-height: auto;
+        max-width: fit-content;
     }
         
         .input-group {
-            flex-direction: column;
+            flex-direction: row;
+            
             gap: 8px;
         }
         
@@ -941,11 +951,12 @@
         }
         
         .btn {
-            width: 100%;
+            max-width: fit-content;
             justify-content: center;
             padding: 10px 14px;
             font-size: 0.85rem;
             min-height: 44px;
+ 
         }
         
         textarea, input[type="text"], select {
@@ -955,7 +966,8 @@
         }
         
         textarea {
-            min-height: 150px;
+            color: #10b981;
+            min-height: 140px;
             font-size: 12px;
         }
         
@@ -978,6 +990,7 @@
         }
         
         #preview .value {
+            color: #0da271;
             font-size: 11px;
         }
         
@@ -1001,7 +1014,7 @@
         }
         
         .stats-grid {
-            grid-template-columns: 1fr;
+            grid-template-rows: 1fr;
             gap: 8px;
         }
         
@@ -1018,7 +1031,7 @@
         }
         
         .template-buttons {
-            grid-template-columns: 1fr;
+            grid-template-rows: 1fr;
             gap: 8px;
         }
         
