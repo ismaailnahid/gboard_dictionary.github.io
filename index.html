@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -33,7 +33,78 @@
         --border: #33415579;
         --shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     }
+/* Dark Mode Scrollbar Styling */
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 8px;
+}
 
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: #1e293b;
+    border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Firefox Scrollbar */
+[data-theme="dark"] {
+    scrollbar-width: thin;
+    scrollbar-color: #475569 #1e293b;
+}
+
+/* Preview Scrollbar in Dark Mode */
+[data-theme="dark"] #preview {
+    scrollbar-width: thin;
+    scrollbar-color: #475569 #1e293b;
+}
+
+[data-theme="dark"] #preview::-webkit-scrollbar {
+    width: 6px;
+}
+
+[data-theme="dark"] #preview::-webkit-scrollbar-track {
+    background: #1e293b;
+    border-radius: 3px;
+}
+
+[data-theme="dark"] #preview::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 3px;
+}
+
+[data-theme="dark"] #preview::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Textarea Scrollbar in Dark Mode */
+[data-theme="dark"] textarea {
+    scrollbar-width: thin;
+    scrollbar-color: #475569 #1e293b;
+}
+
+[data-theme="dark"] textarea::-webkit-scrollbar {
+    width: 6px;
+}
+
+[data-theme="dark"] textarea::-webkit-scrollbar-track {
+    background: #1e293b;
+    border-radius: 3px;
+}
+
+[data-theme="dark"] textarea::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 3px;
+}
+
+[data-theme="dark"] textarea::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
     * {
         box-sizing: border-box;
         margin: 0;
