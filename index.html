@@ -1,1211 +1,1369 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Gboard Dictionary Editor Pro</title>
-  
-<style>
-    :root {
-        --primary: #2563eb;
-        --primary-hover: #1d4ed8;
-        --secondary: #8b5cf6;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --bg: #ffffff73;
-        --card: #ffffff;
-        --text: #1e293b;
-        --text-muted: #64748b;
-        --border: #e2e8f0;
-        --radius: 12px;
-        --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
-        --toast-bg: #1e293b;
-        --toast-color: #f1f5f9;
-    }
 
-    [data-theme="dark"] {
-        --bg: #0f172a;
-        --card: #1e293b1c;
-        --text: #b7c9da;
-        --text-muted: #d2ddd0;
-        --border: #33415579;
-        --shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    }
-/* Dark Mode Scrollbar Styling */
-[data-theme="dark"] ::-webkit-scrollbar {
-    width: 8px;
-}
-
-[data-theme="dark"] ::-webkit-scrollbar-track {
-    background: #1e293b;
-    border-radius: 4px;
-}
-
-[data-theme="dark"] ::-webkit-scrollbar-thumb {
-    background: #475569;
-    border-radius: 4px;
-}
-
-[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
-}
-
-/* Firefox Scrollbar */
-[data-theme="dark"] {
-    scrollbar-width: thin;
-    scrollbar-color: #475569 #1e293b;
-}
-
-/* Preview Scrollbar in Dark Mode */
-[data-theme="dark"] #preview {
-    scrollbar-width: thin;
-    scrollbar-color: #475569 #1e293b;
-}
-
-[data-theme="dark"] #preview::-webkit-scrollbar {
-    width: 6px;
-}
-
-[data-theme="dark"] #preview::-webkit-scrollbar-track {
-    background: #1e293b;
-    border-radius: 3px;
-}
-
-[data-theme="dark"] #preview::-webkit-scrollbar-thumb {
-    background: #475569;
-    border-radius: 3px;
-}
-
-[data-theme="dark"] #preview::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
-}
-
-/* Textarea Scrollbar in Dark Mode */
-[data-theme="dark"] textarea {
-    scrollbar-width: thin;
-    scrollbar-color: #475569 #1e293b;
-}
-
-[data-theme="dark"] textarea::-webkit-scrollbar {
-    width: 6px;
-}
-
-[data-theme="dark"] textarea::-webkit-scrollbar-track {
-    background: #1e293b;
-    border-radius: 3px;
-}
-
-[data-theme="dark"] textarea::-webkit-scrollbar-thumb {
-    background: #475569;
-    border-radius: 3px;
-}
-
-[data-theme="dark"] textarea::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
-}
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    html {
-        overflow: auto;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
-
-    html::-webkit-scrollbar {
-        display: none;
-    }
-
-    body {
-        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-        padding: 16px 12px;
-        line-height: 1.6;
-        font-size: 14px;
-    }
-
-    .container {
-        width: 100%;
-        max-width: 1200px;
-        background: var(--card);
-        border-radius: var(--radius);
-        padding: 24px 20px;
-        box-shadow: var(--shadow);
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        flex-wrap: wrap;
-    }
-
-    .header {
-        text-align: center;
-        padding-bottom: 16px;
-        border-bottom: 2px solid var(--border);
-    }
-
-    h1 {
-        font-size: clamp(1.8rem, 4vw, 2.5rem);
-        color: var(--primary);
-        font-weight: 800;
-        margin-bottom: 8px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        word-wrap: break-word;
-    }
-
-    .subtitle {
-        color: var(--text-muted);
-        font-size: clamp(0.9rem, 2vw, 1.1rem);
-        line-height: 1.4;
-    }
-
-    /* Tabs */
-    .tabs {
-        display: flex;
-        gap: 6px;
-        border-bottom: 2px solid var(--border);
-        padding-bottom: 0;
-        flex-wrap: wrap;
-        overflow-x: auto;
-    }
-
-    .tab-btn {
-        background: none;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 8px 8px 0 0;
-        cursor: pointer;
-        font-weight: 600;
-        color: var(--text-muted);
-        transition: all 0.3s ease;
-        position: relative;
-        font-size: 0.9rem;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-
-    .tab-btn.active {
-        color: var(--primary);
-        background: var(--bg);
-    }
-
-    .tab-btn.active::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: var(--primary);
-        border-radius: 2px;
-    }
-
-    .tab-content {
-        display: none;
-        animation: fadeIn 0.3s ease;
-    }
-
-    .tab-content.active {
-        display: block;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Cards */
-    .card {
-        background: var(--card);
-        border-radius: var(--radius);
-        padding: 20px;
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow-sm);
-    }
-
-    .card h3 {
-        font-size: 1.2rem;
-        margin-bottom: 16px;
-        color: var(--primary);
-    }
-
-    /* Progress Bar */
-    .progress-container {
-        margin: 16px 0;
-    }
-
-    .progress-bar {
-        width: 100%;
-        height: 6px;
-        background: var(--border);
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--primary), var(--success));
-        border-radius: 8px;
-        transition: width 0.5s ease;
-    }
-
-    .progress-text {
-        display: block;
-        text-align: center;
-        margin-top: 6px;
-        color: var(--text-muted);
-        font-size: 0.8rem;
-    }
-
-    /* Form Elements */
-    input, textarea, button, select {
-        font-family: inherit;
-        font-size: 14px;
-    }
-
-    textarea, input[type="text"], input[type="password"], select {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 8px;
-    border: 2px solid var(--border);
-    background: var(--bg);
-    color: var(--text);
-    transition: all 0.3s ease;
-    font-size: 14px;
-}
-
-    textarea:focus, input[type="text"]:focus, input[type="password"]:focus, select:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-    textarea {
-        min-height: 180px;
-        resize: vertical;
-        /* font-family: 'Monaco', 'Consolas', monospace; */
-        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        line-height: 1.4;
-        font-size: 14px;
-        color: #0da271;
-
-    }
-
-    /* Buttons */
-    .btn {
-        background: var(--primary);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 16px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        box-shadow: var(--shadow-sm);
-        font-size: 0.9rem;
-        justify-content: center;
-        text-align: center;
-        min-height: 24px; /* Better touch targets */
-
-
-    }
-
-    .btn:hover {
-        background: var(--primary-hover);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
-    }
-
-    .btn-success { background: var(--success); }
-    .btn-warning { background: var(--warning); }
-    .btn-danger { background: var(--danger); }
-    .btn-secondary { background: var(--text-muted); }
-
-    .btn-success:hover { background: #0da271; }
-    .btn-warning:hover { background: #e58a08; }
-    .btn-danger:hover { background: #dc2626; }
-
-    /* File Upload */
-    .file-upload {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    .file-upload input[type="file"] {
-        display: none;
-    }
-
-    .file-info {
-        color: var(--text-muted);
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    /* Actions Grid */
-/* Actions Grid - Enhanced Responsive Behavior */
-.actions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
-    gap: 10px;
-    margin: 16px 0;
-    width: 100%;
-
-    
-}
-
-.actions-grid .btn {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 44px;
-    font-size: 0.9rem;
-    padding: 10px 12px;
-}
-    /* Input Groups */
-    .input-group {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        align-items: end;
-    }
-
-    .input-field {
-        flex: 1;
-        min-width: 150px;
-    }
-
-    .input-field label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 600;
-        color: var(--text);
-        font-size: 0.9rem;
-    }
-
-    /* Preview */
-    #preview {
-        max-height: 350px;
-        overflow: auto;
-        background: var(--bg);
-        padding: 14px;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-       /* font-family: 'Monaco', 'Consolas', monospace; */
-        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-
-        font-size: 13px;
-    }
-
-    #preview div {
-        padding: 8px 10px;
-        border-radius: 6px;
-        transition: all 0.2s ease;
-        margin-bottom: 3px;
-        cursor: pointer;
-        border-left: 3px solid transparent;
-        font-size: 13px;
-        line-height: 1.3;
-    }
-
-    #preview div:hover {
-        background: rgba(37, 99, 235, 0.05);
-    }
-
-    #preview .shortcut {
-        font-weight: 700;
-        color: var(--primary);
-        display: inline-block;
-        min-width: 100px;
-        font-size: 13px;
-    }
-
-    #preview .value {
-color: #0da271;
-        font-size: 13px;
-        word-break: break-word;
-    }
-
-    #preview .highlight {
-        background: rgba(245, 158, 11, 0.1);
-        border-left-color: var(--warning);
-    }
-
-    #preview .selected {
-        background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(139, 92, 246, 0.1));
-        border-left-color: var(--primary);
-        transform: translateX(4px);
-    }
-
-    #preview .new-entry {
-        background: rgba(16, 185, 129, 0.1);
-        border-left-color: var(--success);
-    }
-
-    #preview .edited-entry {
-        background: rgba(239, 68, 68, 0.1);
-        border-left-color: var(--danger);
-    }
-
-    /* Stats */
-    #stats {
-        text-align: right;
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        margin-top: 10px;
-        padding: 10px;
-        background: var(--bg);
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        line-height: 1.4;
-    }
-
-    /* Toast */
-    #toast {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--toast-bg);
-        color: var(--toast-color);
-        padding: 14px 20px;
-        border-radius: 8px;
-        opacity: 0;
-        pointer-events: none;
-        transition: all 0.3s ease;
-        z-index: 1000;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        font-size: 0.9rem;
-        max-width: 90%;
-        text-align: center;
-    }
-
-    #toast.show {
-        opacity: 1;
-        transform: translateX(-50%) translateY(-10px);
-    }
-
-    /* Alphabet Bar */
-    #alphabetBar {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 6px;
-        margin: 14px 0;
-        padding: 14px;
-        background: var(--bg);
-        border-radius: 8px;
-        border: 1px solid var(--border);
-    }
-
-    #alphabetBar span {
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--primary);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        user-select: none;
-        padding: 5px 8px;
-        border-radius: 6px;
-        min-width: 30px;
-        text-align: center;
-    }
-
-    #alphabetBar span:hover {
-        background: var(--primary);
-        color: white;
-        transform: scale(1.1);
-    }
-
-    /* Stats Grid */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 12px;
-        margin: 16px 0;
-    }
-
-    .stat-card {
-        background: var(--bg);
-        padding: 16px;
-        border-radius: 10px;
-        text-align: center;
-        border: 1px solid var(--border);
-        transition: transform 0.3s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-2px);
-    }
-
-    .stat-number {
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--primary);
-        margin-bottom: 6px;
-        line-height: 1;
-    }
-
-    .stat-label {
-        color: var(--text-muted);
-        font-weight: 600;
-        font-size: 0.8rem;
-    }
-
-    /* Template Buttons */
-    .template-buttons {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 10px;
-        margin: 14px 0;
-    }
-
-    .template-btn {
-        background: var(--bg);
-        border: 2px solid var(--border);
-        color: var(--text);
-        padding: 10px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 600;
-        font-size: 0.9rem;
-        min-height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-    }
-
-    .template-btn:hover {
-        border-color: var(--primary);
-        background: var(--primary);
-        color: white;
-        transform: translateY(-1px);
-    }
-
-    /* FAB */
-    .fab-container {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 100;
-    }
-
-    .fab {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: var(--primary);
-        color: white;
-        border: none;
-        cursor: pointer;
-        font-size: 20px;
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .fab:hover {
-        transform: scale(1.1) rotate(90deg);
-        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
-    }
-
-    .fab-actions {
-        position: absolute;
-        bottom: 65px;
-        right: 0;
-        display: none;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .fab-actions.show {
-        display: flex;
-        animation: slideUp 0.3s ease;
-    }
-
-    .fab-action {
-        width: 46px;
-        height: 46px;
-        border-radius: 50%;
-        background: var(--secondary);
-        color: white;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .fab-action:hover {
-        transform: scale(1.1);
-    }
-
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Advanced Filters */
-    .advanced-filters {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 12px;
-        margin: 16px 0;
-        padding: 16px;
-        background: var(--bg);
-        border-radius: 10px;
-        border: 1px solid var(--border);
-    }
-
-    .filter-group {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .filter-group label {
-        font-weight: 600;
-        color: var(--text);
-        font-size: 0.8rem;
-    }
-
-    /* Datlist */
-    datalist {
-        font-size: 14px;
-    }
-
-    /* Dark mode toggle */
-    .theme-toggle {
-        position: fixed;
-        top: 16px;
-        right: 16px;
-        background: var(--card);
-        border: 2px solid var(--border);
-        border-radius: 50%;
-        width: 46px;
-        height: 46px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        transition: all 0.3s ease;
-        z-index: 100;
-    }
-
-    .theme-toggle:hover {
-        transform: rotate(30deg);
-        border-color: var(--primary);
-    }
-
-    /* ==================== RESPONSIVE DESIGN ==================== */
-
-    /* Large devices (desktops, 1200px and up) */
-    @media (min-width: 1200px) {
-        .container {
-            padding: 30px;
-            gap: 24px;
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #ffffff73;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #ff2600;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --toast-bg: #1e293b;
+            --toast-color: #f1f5f9;
         }
-        
-        .card {
-            padding: 24px;
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-        }
-    }
 
-    /* Medium devices (tablets, 768px to 1199px) */
-    @media (max-width: 1199px) and (min-width: 768px) {
-        body {
-            padding: 20px 16px;
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --card: #1e293b1c;
+            --text: #b7c9da;
+            --text-muted: #d2ddd0;
+            --border: #33415579;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
-        
-        .container {
-            padding: 24px;
-        }
-        
-        .actions-grid {
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        }
-        
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
 
-    /* Small devices (landscape phones, 576px to 767px) */
-    @media (max-width: 767px) and (min-width: 576px) {
-        body {
-            padding: 16px 12px;
+        /* Dark Mode Scrollbar Styling */
+        [data-theme="dark"] ::-webkit-scrollbar {
+            width: 8px;
         }
-        
-        .container {
-            padding: 20px 16px;
-            gap: 16px;
-        }
-        
-        .card {
-            padding: 18px;
-        }
-        
-        .header {
-            padding-bottom: 12px;
-        }
-        
-        h1 {
-            font-size: 2rem;
-        }
-        
-        .tabs {
-            gap: 4px;
-        }
-        
-        .tab-btn {
-            padding: 8px 12px;
-            font-size: 0.85rem;
-        }
-        
-.actions-grid {
-        grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr));
-        gap: 8px;
-    }
-    
-    .actions-grid .btn {
-        font-size: 0.85rem;
-        padding: 8px 10px;
-        min-height: 42px;
-    }
-        
-        .input-group {
-            gap: 8px;
-        }
-        
-        .input-field {
-            min-width: 120px;
-        }
-        
-        .btn {
-            padding: 8px 12px;
-            font-size: 0.85rem;
-            min-height: 40px;
-        }
-        
-        textarea, input[type="text"], select {
-            padding: 10px 12px;
-            font-size: 13px;
-        }
-        
-        #preview {
-            max-height: 300px;
-            padding: 12px;
-            font-size: 12px;
-        }
-        
-        #preview div {
-            padding: 6px 8px;
-            font-size: 12px;
-        }
-        
-        #preview .shortcut {
-            min-width: 80px;
-            font-size: 12px;
-        }
-        
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        
-        .stat-card {
-            padding: 14px;
-        }
-        
-        .stat-number {
-            font-size: 1.5rem;
-        }
-        
-        .fab-container {
-            bottom: 16px;
-            right: 16px;
-        }
-        
-        .fab {
-            width: 50px;
-            height: 50px;
-            font-size: 18px;
-        }
-        
-        .fab-action {
-            width: 42px;
-            height: 42px;
-            font-size: 15px;
-        }
-    }
 
-    /* Extra small devices (portrait phones, less than 576px) */
-    @media (max-width: 575px) {
-        body {
-            padding: 12px 8px;
-            font-size: 13px;
+        [data-theme="dark"] ::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 4px;
         }
-        
-        .container {
-            padding: 16px 12px;
-            gap: 14px;
-            border-radius: 10px;
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
         }
-        
-        .card {
-            padding: 16px;
-            border-radius: 10px;
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
         }
-        
-        .card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 12px;
+
+        /* Firefox Scrollbar */
+        [data-theme="dark"] {
+            scrollbar-width: thin;
+            scrollbar-color: #475569 #1e293b;
         }
-        
-        .header {
-            padding-bottom: 10px;
+
+        /* Preview Scrollbar in Dark Mode */
+        [data-theme="dark"] #preview {
+            scrollbar-width: thin;
+            scrollbar-color: #475569 #1e293b;
         }
-        
-        h1 {
-            font-size: 1.6rem;
-            margin-bottom: 6px;
+
+        [data-theme="dark"] #preview::-webkit-scrollbar {
+            width: 6px;
         }
-        
-        .subtitle {
-            font-size: 0.9rem;
+
+        [data-theme="dark"] #preview::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 3px;
         }
-        
-        .tabs {
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 2px;
-            border-bottom: none;
+
+        [data-theme="dark"] #preview::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
         }
-        
-        .tab-btn {
-            border-radius: 8px;
-            margin-bottom: 2px;
-            padding: 10px 12px;
-            font-size: 0.85rem;
+
+        [data-theme="dark"] #preview::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
         }
-        
-        .tab-btn.active::after {
+
+        /* Textarea Scrollbar in Dark Mode */
+        [data-theme="dark"] textarea {
+            scrollbar-width: thin;
+            scrollbar-color: #475569 #1e293b;
+        }
+
+        [data-theme="dark"] textarea::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        [data-theme="dark"] textarea::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+
+        [data-theme="dark"] textarea::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+
+        [data-theme="dark"] textarea::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            overflow: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        html::-webkit-scrollbar {
             display: none;
         }
-        
-        .tab-btn.active {
-            border-radius: 8px;
-        }
-        
-.actions-grid {
-display: flex;
-flex-direction: row;
-flex-wrap: wrap;
 
-        gap: 8px;
-    }
-    
-    .actions-grid .btn {
-        font-size: 0.8rem;
-        padding: 8px 10px;
-        min-height: auto;
-        max-width: fit-content;
-    }
-        
-        .input-group {
-            flex-direction: row;
-            
-            gap: 8px;
-        }
-        
-        .input-field {
-            min-width: 100%;
-            width: 100%;
-        }
-        
-        .btn {
-            max-width: fit-content;
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
             justify-content: center;
-            padding: 10px 14px;
-            font-size: 0.85rem;
-            min-height: 44px;
- 
-        }
-        
-        textarea, input[type="text"], select {
-            padding: 10px 12px;
-            font-size: 13px;
-            width: 100%;
-        }
-        
-        textarea {
-            color: #10b981;
-            min-height: 140px;
-            font-size: 12px;
-        }
-        
-        #preview {
-            max-height: 250px;
-            padding: 10px;
-            font-size: 11px;
-        }
-        
-        #preview div {
-            padding: 5px 6px;
-            margin-bottom: 2px;
-            font-size: 11px;
-            line-height: 1.2;
-        }
-        
-        #preview .shortcut {
-            min-width: 70px;
-            font-size: 11px;
-        }
-        
-        #preview .value {
-            color: #0da271;
-            font-size: 11px;
-        }
-        
-        #stats {
-            font-size: 0.75rem;
-            padding: 8px;
-            margin-top: 8px;
-            text-align: center;
-        }
-        
-        #alphabetBar {
-            gap: 4px;
-            padding: 10px;
-            margin: 10px 0;
-        }
-        
-        #alphabetBar span {
-            font-size: 11px;
-            padding: 4px 6px;
-            min-width: 26px;
-        }
-        
-        .stats-grid {
-            grid-template-rows: 1fr;
-            gap: 8px;
-        }
-        
-        .stat-card {
-            padding: 12px;
-        }
-        
-        .stat-number {
-            font-size: 1.4rem;
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-        }
-        
-        .template-buttons {
-            grid-template-rows: 1fr;
-            gap: 8px;
-        }
-        
-        .template-btn {
-            padding: 8px;
-            font-size: 0.85rem;
-            min-height: 40px;
-        }
-        
-        .advanced-filters {
-            grid-template-columns: 1fr;
-            gap: 10px;
-            padding: 12px;
-        }
-        
-        .filter-group label {
-            font-size: 0.75rem;
-        }
-        
-        .fab-container {
-            bottom: 12px;
-            right: 12px;
-        }
-        
-        .fab {
-            width: 48px;
-            height: 48px;
-            font-size: 18px;
-        }
-        
-        .fab-actions {
-            bottom: 60px;
-            gap: 8px;
-        }
-        
-        .fab-action {
-            width: 40px;
-            height: 40px;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 16px 12px;
+            line-height: 1.6;
             font-size: 14px;
         }
-        
-        .theme-toggle {
-            top: 12px;
-            right: 12px;
-            width: 42px;
-            height: 42px;
-            font-size: 16px;
-        }
-        
-        #toast {
-            bottom: 16px;
-            padding: 12px 16px;
-            font-size: 0.85rem;
-            max-width: 95%;
-        }
-        
-        .progress-container {
-            margin: 12px 0;
-        }
-        
-        .progress-bar {
-            height: 5px;
-        }
-        
-        .progress-text {
-            font-size: 0.75rem;
-            margin-top: 4px;
-        }
-    }
 
-    /* Very small devices (less than 360px) */
-    @media (max-width: 359px) {
-        body {
-            padding: 8px 6px;
-        }
-        
         .container {
-            padding: 12px 8px;
-            gap: 12px;
+            width: 100%;
+            max-width: 1400px;
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 24px 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
-        
-        .card {
-            padding: 12px;
+
+        /* Two Column Layout for Editor Tab */
+        #editor-tab.active {
+            display: grid !important;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 20px;
+            align-items: start;
         }
-        
+
+        .editor-left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .editor-right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Full width sections */
+        .full-width-section {
+            grid-column: 1 / -1;
+        }
+
+        .header {
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+            grid-column: 1 / -1;
+        }
+
         h1 {
-            font-size: 1.6rem;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: var(--primary);
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            word-wrap: break-word;
         }
-        
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            line-height: 1.4;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0;
+            flex-wrap: wrap;
+            /* overflow-x: auto; */
+            grid-column: 1 / -1;
+        }
+
         .tab-btn {
-            padding: 8px 10px;
+            background: none;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            background: var(--bg);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 10px 5px 50px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 16px 0;
+            grid-column: 1 / -1;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            border-radius: 8px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            display: block;
+            text-align: center;
+            margin-top: 6px;
+            color: var(--text-muted);
             font-size: 0.8rem;
         }
-        
+
+        /* Form Elements */
+        input,
+        textarea,
+        button,
+        select {
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        textarea,
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        textarea:focus,
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            min-height: 180px;
+            resize: vertical;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.4;
+            font-size: 14px;
+            color: #0da271;
+
+        }
+
+        /* Buttons */
         .btn {
-            padding: 8px 10px;
-            font-size: 0.8rem;
-            min-height: 42px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+            justify-content: center;
+            text-align: center;
+            min-height: 24px;
+            /* Better touch targets */
         }
-        
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-secondary {
+            background: var(--text-muted);
+        }
+
+        .btn-success:hover {
+            background: #0da271;
+        }
+
+        .btn-warning:hover {
+            background: #e58a08;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* File Upload */
+        .file-upload {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-info {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Actions Grid */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 10px 5px 10px;
+            width: fit-content;
+        }
+
+        .actions-grid .btn {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: 44px;
+            font-size: 0.9rem;
+            padding: 10px 12px;
+        }
+
+        /* Input Groups */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: end;
+            /* padding: 10px; */
+        }
+
+        .input-field {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .input-field label {
+            display: block;
+            margin-bottom: 6px;
+            padding: 2px;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        /* Preview */
         #preview {
-            max-height: 200px;
+            height: 400px;
+            overflow: auto;
+            background: var(--bg);
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+            font-size: 13px;
         }
 
-.actions-grid {
-        grid-template-columns: repeat(auto-fit, minmax(min(90px, 100%), 1fr));
-        gap: 4px;
-    }
-    
-    .actions-grid .btn {
-        font-size: 0.7rem;
-        padding: 4px 6px;
-        min-height: 36px;
-    }
-}
+        #preview div {
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            margin-bottom: 3px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            font-size: 13px;
+            line-height: 1.3;
+            display: flex;
+            justify-content: space-between;
+        }
 
-    /* Touch device improvements */
-    @media (hover: none) and (pointer: coarse) {
-        .btn:hover,
-        .tab-btn:hover,
-        .template-btn:hover,
-        .fab:hover,
-        .fab-action:hover,
-        #alphabetBar span:hover,
-        .theme-toggle:hover {
-            transform: none;
-        }
-        
-        .btn:active,
-        .tab-btn:active,
-        .template-btn:active {
-            transform: scale(0.98);
-        }
-        
         #preview div:hover {
-            background: transparent;
+            background: rgba(37, 99, 235, 0.05);
         }
-        
-        #preview div:active {
-            background: rgba(37, 99, 235, 0.1);
-        }
-    }
 
-    /* High contrast mode support */
-    @media (prefers-contrast: high) {
-        :root {
-            --border: #000000;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        #preview .shortcut {
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 120px;
+            font-size: 13px;
         }
-        
-        .btn {
-            border: 2px solid var(--primary);
-        }
-    }
 
-    /* Reduced motion support */
-    @media (prefers-reduced-motion: reduce) {
-        * {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
+        #preview .value {
+            color: #0da271;
+            font-size: 13px;
+            word-break: break-word;
+            flex: 1;
+            text-align: left;
+            padding-left: 10px;
         }
-        
-        .fab:hover,
-        .btn:hover,
-        .tab-btn:hover,
+
+        #preview .highlight {
+            background: rgba(245, 158, 11, 0.1);
+            border-left-color: var(--warning);
+        }
+
+        #preview .selected {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(139, 92, 246, 0.1));
+            border-left-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        #preview .new-entry {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: var(--success);
+        }
+
+        #preview .edited-entry {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: var(--danger);
+        }
+
+        /* Stats */
+        #stats {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+            padding: 10px;
+            background: var(--bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            line-height: 1.4;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--toast-bg);
+            color: var(--toast-color);
+            padding: 14px 20px;
+            border-radius: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            font-size: 0.9rem;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        /* Alphabet Bar */
+        #alphabetBar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin: 14px 0;
+            padding: 14px;
+            background: var(--bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        #alphabetBar span {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            padding: 5px 8px;
+            border-radius: 6px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        #alphabetBar span:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .stat-card {
+            background: var(--bg);
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 6px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        /* Template Buttons */
+        .template-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin: 14px 0;
+        }
+
+        .template-btn {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
         .template-btn:hover {
-            transform: none;
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+            transform: translateY(-1px);
         }
-    }
-</style>
+
+        /* FAB */
+        .fab-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .fab {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .fab-actions {
+            position: absolute;
+            bottom: 65px;
+            right: 0;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .fab-actions.show {
+            display: flex;
+            animation: slideUp 0.3s ease;
+        }
+
+        .fab-action {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab-action:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Advanced Filters */
+        .advanced-filters {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 10px 5px 5px;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-group input {
+            color: #1d4ed8;
+
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.8rem;
+        }
+
+        /* Datlist */
+        datalist {
+            font-size: 14px;
+            background: red;
+            color: #8b5cf6;
+        }
+
+        /* Dark mode toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            width: 46px;
+            height: 46px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+            border-color: var(--primary);
+        }
+
+        /* Edit Controls */
+        .edit-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+
+        /* Large devices (desktops, 1200px and up) */
+        @media (min-width: 1200px) {
+            #editor-tab.active {
+                grid-template-columns: 1fr 1.5fr;
+            }
+
+            .container {
+                padding: 30px;
+                gap: 24px;
+            }
+
+            .card {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+
+            .actions-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            /* Individual button sizing */
+            .actions-grid .btn {
+                /* min-width: fit-content; */
+                font-size: 0.90rem;
+                /* max-width: fit-content; */
+                /* ছোট টেক্সট সাইজ */
+                padding: 6px 8px;
+                min-height: 36px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+
+            }
+
+
+
+        }
+
+
+
+        /* Medium devices (tablets, 768px to 1199px) */
+        @media (max-width: 1199px) and (min-width: 768px) {
+            body {
+                padding: 20px 16px;
+            }
+
+            .container {
+                padding: 24px;
+            }
+
+            #editor-tab.active {
+                grid-template-columns: 1fr 1.2fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: repeat(3, 1fr);
+
+            }
+
+            /* Individual button sizing */
+            .actions-grid .btn {
+                min-width: fit-content;
+                font-size: 0.75rem;
+                /* ছোট টেক্সট সাইজ */
+                /* padding: 6px 8px; */
+                min-height: 36px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .advanced-filters {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+
+
+        /* Small devices (landscape phones, 576px to 767px) */
+        @media (max-width: 767px) and (min-width: 576px) {
+            body {
+                padding: 16px 12px;
+            }
+
+            .container {
+                padding: 20px 16px;
+                gap: 16px;
+            }
+
+            #editor-tab.active {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .header {
+                padding-bottom: 12px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .tabs {
+                gap: 4px;
+            }
+
+            .tab-btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+
+            .actions-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .actions-grid .btn {
+                font-size: 0.85rem;
+                padding: 8px 10px;
+                min-height: 42px;
+            }
+
+            .input-group {
+                gap: 8px;
+            }
+
+            .input-field {
+                min-width: 120px;
+            }
+
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+                min-height: 40px;
+            }
+
+            textarea,
+            input[type="text"],
+            select {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            #preview {
+                height: 300px;
+                padding: 12px;
+                font-size: 12px;
+            }
+
+            #preview div {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            #preview .shortcut {
+                min-width: 80px;
+                font-size: 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 14px;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .fab-container {
+                bottom: 16px;
+                right: 16px;
+            }
+
+            .fab {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+
+            .fab-action {
+                width: 42px;
+                height: 42px;
+                font-size: 15px;
+            }
+
+            .advanced-filters {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Extra small devices (portrait phones, less than 576px) */
+        @media (max-width: 575px) {
+            body {
+                padding: 12px 8px;
+                font-size: 13px;
+            }
+
+            .container {
+                padding: 16px 12px;
+                gap: 14px;
+                border-radius: 10px;
+            }
+
+            #editor-tab.active {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 16px;
+                border-radius: 10px;
+            }
+
+            .card h3 {
+                font-size: 1.1rem;
+                margin-bottom: 12px;
+            }
+
+            .header {
+                padding-bottom: 10px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+                margin-bottom: 6px;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+
+            .tabs {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 2px;
+                border-bottom: none;
+            }
+
+            .tab-btn {
+                border-radius: 8px;
+                margin-bottom: 2px;
+                padding: 10px 12px;
+                font-size: 0.85rem;
+            }
+
+            .tab-btn.active::after {
+                display: none;
+            }
+
+            .tab-btn.active {
+                border-radius: 8px;
+            }
+
+            .actions-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .actions-grid .btn {
+                font-size: 0.8rem;
+                padding: 8px 10px;
+                min-height: auto;
+            }
+
+            .input-group {
+                flex-direction: row;
+                gap: 8px;
+            }
+
+            .input-field {
+                min-width: 100%;
+                width: 100%;
+            }
+
+            .btn {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+                min-height: 44px;
+            }
+
+            textarea,
+            input[type="text"],
+            select {
+                padding: 10px 12px;
+                font-size: 13px;
+                width: 100%;
+            }
+
+            textarea {
+                color: #10b981;
+                min-height: 140px;
+                font-size: 12px;
+            }
+
+            #preview {
+                height: 250px;
+                padding: 10px;
+                font-size: 11px;
+            }
+
+            #preview div {
+                padding: 5px 6px;
+                margin-bottom: 2px;
+                font-size: 11px;
+                line-height: 1.2;
+            }
+
+            #preview .shortcut {
+                min-width: 70px;
+                font-size: 11px;
+            }
+
+            #preview .value {
+                color: #0da271;
+                font-size: 11px;
+            }
+
+            #stats {
+                font-size: 0.75rem;
+                padding: 8px;
+                margin-top: 8px;
+                text-align: center;
+            }
+
+            #alphabetBar {
+                gap: 4px;
+                padding: 10px;
+                margin: 10px 0;
+            }
+
+            #alphabetBar span {
+                font-size: 11px;
+                padding: 4px 6px;
+                min-width: 26px;
+            }
+
+            .stats-grid {
+                grid-template-rows: 1fr;
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-number {
+                font-size: 1.4rem;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+            }
+
+            .template-buttons {
+                grid-template-rows: 1fr;
+                gap: 8px;
+            }
+
+            .template-btn {
+                padding: 8px;
+                font-size: 0.85rem;
+                min-height: 40px;
+            }
+
+            .advanced-filters {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 12px;
+            }
+
+            .filter-group label {
+                font-size: 0.75rem;
+            }
+
+            .edit-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .fab-container {
+                bottom: 12px;
+                right: 12px;
+            }
+
+            .fab {
+                width: 48px;
+                height: 48px;
+                font-size: 18px;
+            }
+
+            .fab-actions {
+                bottom: 60px;
+                gap: 8px;
+            }
+
+            .fab-action {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+
+            .theme-toggle {
+                top: 12px;
+                right: 12px;
+                width: 42px;
+                height: 42px;
+                font-size: 16px;
+            }
+
+            #toast {
+                bottom: 16px;
+                padding: 12px 16px;
+                font-size: 0.85rem;
+                max-width: 95%;
+            }
+
+            .progress-container {
+                margin: 12px 0;
+            }
+
+            .progress-bar {
+                height: 5px;
+            }
+
+            .progress-text {
+                font-size: 0.75rem;
+                margin-top: 4px;
+            }
+        }
+
+        /* Very small devices (less than 360px) */
+        @media (max-width: 359px) {
+            body {
+                padding: 8px 6px;
+            }
+
+            .container {
+                padding: 15px 8px;
+                gap: 12px;
+            }
+
+            .card {
+                padding: 5px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .tab-btn {
+                padding: 8px;
+                font-size: 0.8rem;
+            }
+
+            .btn {
+                padding: 8px;
+                font-size: 0.8rem;
+                min-height: 42px;
+            }
+
+            #preview {
+                height: 200px;
+            }
+
+            .actions-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 4px;
+            }
+
+            .actions-grid .btn {
+                font-size: 0.7rem;
+                padding: 4px 5px;
+                min-height: 36px;
+
+            }
+        }
+
+            /* Touch device improvements */
+            @media (hover: none) and (pointer: coarse) {
+
+                .btn:hover,
+                .tab-btn:hover,
+                .template-btn:hover,
+                .fab:hover,
+                .fab-action:hover,
+                #alphabetBar span:hover,
+                .theme-toggle:hover {
+                    transform: none;
+                }
+
+                .btn:active,
+                .tab-btn:active,
+                .template-btn:active {
+                    transform: scale(0.98);
+                }
+
+                #preview div:hover {
+                    background: transparent;
+                }
+
+                #preview div:active {
+                    background: rgba(37, 99, 235, 0.1);
+                }
+            }
+
+            /* High contrast mode support */
+            @media (prefers-contrast: high) {
+                :root {
+                    --border: #000000;
+                    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+                }
+
+                .btn {
+                    border: 2px solid var(--primary);
+                }
+            }
+
+            /* Reduced motion support */
+            @media (prefers-reduced-motion: reduce) {
+                * {
+                    animation-duration: 0.01ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: 0.01ms !important;
+                }
+
+                .fab:hover,
+                .btn:hover,
+                .tab-btn:hover,
+                .template-btn:hover {
+                    transform: none;
+                }
+            }
+    </style>
 
 
 </head>
+
 <body>
     <!-- Theme Toggle -->
     <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
@@ -1214,7 +1372,7 @@ flex-wrap: wrap;
         <!-- Header -->
         <div class="header">
             <h1>🚀 Gboard Dictionary Pro</h1>
-            <p class="subtitle">Advanced dictionary editor with smart features</p>
+            <p class="subtitle">Advanced Dictionary Editor</p>
         </div>
 
         <!-- Progress Bar -->
@@ -1222,7 +1380,7 @@ flex-wrap: wrap;
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill" style="width: 0%"></div>
             </div>
-            <span class="progress-text" id="progressText">Loading...</span>
+            <span class="progress-text" id="progressText">Loading... </span>
         </div>
 
         <!-- Navigation Tabs -->
@@ -1237,7 +1395,7 @@ flex-wrap: wrap;
         <!-- Editor Tab -->
         <div id="editor-tab" class="tab-content active">
             <!-- File Upload -->
-            <div class="card">
+            <div class="card full-width-section">
                 <h3>📁 File Management</h3>
                 <div class="file-upload">
                     <input type="file" id="fileInput" accept=".txt,.zip">
@@ -1247,97 +1405,109 @@ flex-wrap: wrap;
             </div>
 
             <!-- Text Area -->
-            <div class="card">
+            <div class="card full-width-section">
                 <h3>📝 Dictionary Content</h3>
-                <textarea id="textArea" placeholder="Your dictionary content will appear here...&#10;Format: shortcut&#9;value&#9;en-US&#9;" 
-                         spellcheck="false"></textarea>
+                <textarea id="textArea"
+                    placeholder="Your dictionary content will appear here...&#10;Format: shortcut&#9;value&#9;en-US&#9;"
+                    spellcheck="false"></textarea>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="card">
-                <h3>⚡ Quick Actions</h3>
-                <div class="actions-grid">
-                    <button class="btn" onclick="sortLines()">🔀 Sort</button>
-                    <button class="btn" onclick="removeEmptyLines()">🗑️ Clean Spaces</button>
-                    <button class="btn" onclick="removeDuplicates()">📑 Remove Duplicates</button>
-                    <button class="btn" onclick="removeExtraSpaces()">✨ Clean Format</button>
-                    <button class="btn btn-success" onclick="downloadFile()">📥 Export TXT</button>
-                    <button class="btn btn-success" onclick="downloadZip()">📦 Export ZIP</button>
-                    <button class="btn btn-warning" onclick="sendToTelegram()">📤 Telegram</button>
-                    <button class="btn" onclick="goToLastChange()">🟢 Last Change</button>
+            <!-- LEFT COLUMN -->
+            <div class="editor-left-column">
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3>⚡ Quick Actions</h3>
+                    <div class="actions-grid">
+                        <button class="btn" onclick="sortLines()">🔀 Sort</button>
+                        <button class="btn" onclick="removeEmptyLines()">🗑️ Spaces</button>
+                        <button class="btn" onclick="removeDuplicates()">📑 Duplicates</button>
+                        <button class="btn" onclick="removeExtraSpaces()">✨ Format</button>
+                        <button class="btn btn-success" onclick="downloadFile()">📥 TXT</button>
+                        <button class="btn btn-success" onclick="downloadZip()">📦 ZIP</button>
+                        <button class="btn btn-warning" onclick="sendToTelegram()">📤 Telegram</button>
+                        <button class="btn" onclick="goToLastChange()">🟢 Changed</button>
+                    </div>
+                </div>
+
+                <!-- Add Entry -->
+                <div class="card">
+                    <h3 style="color: greenyellow;">➕ New Entry</h3>
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label>Shortcut</label>
+                            <input type="text" id="shortcutInput" placeholder="Enter shortcut... ">
+                        </div>
+                        <div class="input-field">
+                            <label>Value</label>
+                            <input type="text" id="valueInput" placeholder="Enter full value... ">
+                        </div>
+                        <button class="btn" onclick="addEntry()">Add Entry</button>
+                    </div>
+                </div>
+
+                <!-- Advanced Filters -->
+                <div class="card">
+                    <h3>🔍 Advanced Filters</h3>
+                    <div class="advanced-filters">
+                        <div class="filter-group">
+                            <label>Shortcut Filter</label>
+                            <input type="text" id="shortcutFilter" placeholder="Filter shortcuts... "
+                                list="shortcutSuggestions">
+                        </div>
+                        <div class="filter-group">
+                            <label>Value Filter</label>
+                            <input type="text" id="valueFilter" placeholder="Filter values... " list="valueSuggestions">
+                        </div>
+                        <div class="filter-group">
+                            <label>Filter Type</label>
+                            <select id="filterType">
+                                <option value="contains">Contains</option>
+                                <option value="startsWith">Starts With</option>
+                                <option value="endsWith">Ends With</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Sort By</label>
+                            <select id="sortBy">
+                                <option value="shortcut">Shortcut A-Z</option>
+                                <option value="shortcut-desc">Shortcut Z-A</option>
+                                <option value="value">Value A-Z</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="clearFilters()" style="margin-top: 6px; width: 100%; ">❌ Clear
+                        Filters</button>
                 </div>
             </div>
 
-            <!-- Add Entry -->
-            <div class="card">
-                <h3>➕ Add New Entry</h3>
-                <div class="input-group">
-                    <div class="input-field">
-                        <label>Shortcut</label>
-                        <input type="text" id="shortcutInput" placeholder="Enter shortcut...">
+            <!-- RIGHT COLUMN -->
+            <div class="editor-right-column">
+                <!-- Preview Section -->
+                <div class="card">
+                    <h3>👁️ Live Preview</h3>
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label>Edit Shortcut</label>
+                            <input type="text" id="editShortcut" placeholder="Edit shortcut...">
+                        </div>
+                        <div class="input-field">
+                            <label>Edit Value</label>
+                            <input type="text" id="editValue" placeholder="Edit value...">
+                        </div>
                     </div>
-                    <div class="input-field">
-                        <label>Value</label>
-                        <input type="text" id="valueInput" placeholder="Enter full value...">
-                    </div>
-                    <button class="btn" onclick="addEntry()">Add Entry</button>
-                </div>
-            </div>
 
-            <!-- Advanced Filters -->
-            <div class="card">
-                <h3>🔍 Advanced Filters</h3>
-                <div class="advanced-filters">
-                    <div class="filter-group">
-                        <label>Shortcut Filter</label>
-                        <input type="text" id="shortcutFilter" placeholder="Filter shortcuts..." list="shortcutSuggestions">
+                    <div class="edit-controls">
+                        <button class="btn btn-success" id="applyEditBtn">✅ Apply</button>
+                        <button class="btn btn-danger" id="deleteBtn">🗑️ Delete</button>
                     </div>
-                    <div class="filter-group">
-                        <label>Value Filter</label>
-                        <input type="text" id="valueFilter" placeholder="Filter values..." list="valueSuggestions">
-                    </div>
-                    <div class="filter-group">
-                        <label>Filter Type</label>
-                        <select id="filterType">
-                            <option value="contains">Contains</option>
-                            <option value="startsWith">Starts With</option>
-                            <option value="endsWith">Ends With</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Sort By</label>
-                        <select id="sortBy">
-                            <option value="shortcut">Shortcut A-Z</option>
-                            <option value="shortcut-desc">Shortcut Z-A</option>
-                            <option value="value">Value A-Z</option>
-                        </select>
-                    </div>
-                </div>
-                <button class="btn" onclick="clearFilters()" style="margin-top: 12px;">❌ Clear Filters</button>
-            </div>
 
-            <!-- Preview Section -->
-            <div class="card">
-                <h3>👁️ Live Preview</h3>
-                <div class="input-group">
-                    <div class="input-field">
-                        <label>Edit Shortcut</label>
-                        <input type="text" id="editShortcut" placeholder="Edit shortcut...">
-                    </div>
-                    <div class="input-field">
-                        <label>Edit Value</label>
-                        <input type="text" id="editValue" placeholder="Edit value...">
-                    </div>
-                    <button class="btn btn-success" id="applyEditBtn">✅ Apply</button>
-                    <button class="btn btn-danger" id="deleteBtn">🗑️ Delete</button>
+                    <div id="alphabetBar"></div>
+                    <div id="preview"></div>
+                    <div id="stats"></div>
+
+                    <datalist id="shortcutSuggestions"></datalist>
+                    <datalist id="valueSuggestions"></datalist>
                 </div>
-                
-                <div id="alphabetBar"></div>
-                <div id="preview"></div>
-                <div id="stats"></div>
-                
-                <datalist id="shortcutSuggestions"></datalist>
-                <datalist id="valueSuggestions"></datalist>
             </div>
         </div>
 
@@ -1345,14 +1515,17 @@ flex-wrap: wrap;
         <div id="batch-tab" class="tab-content">
             <div class="card">
                 <h3>📦 Batch Import</h3>
-                <textarea id="batchInput" placeholder="Enter multiple entries (one per line):&#10;Format: shortcut=value&#10;Example:&#10;bd=Bangladesh&#10;usa=United States&#10;uk=United Kingdom" 
-                         rows="10"></textarea>
+                <textarea id="batchInput"
+                    placeholder="Enter multiple entries (one per line):&#10;Format: shortcut=value&#10;Example:&#10;bd=Bangladesh&#10;usa=United States&#10;uk=United Kingdom"
+                    rows="10"></textarea>
                 <div class="actions-grid" style="margin-top: 16px;">
                     <button class="btn" onclick="validateBatch()">✅ Validate</button>
                     <button class="btn btn-success" onclick="importBatch()">📥 Import</button>
                     <button class="btn btn-warning" onclick="generateFromText()">🤖 Auto Generate</button>
                 </div>
-                <div id="batchPreview" style="margin-top: 16px; padding: 16px; background: var(--bg); border-radius: 8px; display: none;"></div>
+                <div id="batchPreview"
+                    style="margin-top: 16px; padding: 16px; background: var(--bg); border-radius: 8px; display: none;">
+                </div>
             </div>
         </div>
 
@@ -1383,7 +1556,7 @@ flex-wrap: wrap;
             <div class="card">
                 <h3>📈 Advanced Analytics</h3>
                 <div id="analyticsContent">
-                    <p>Analytics will be displayed here after loading dictionary...</p>
+                    <p>Analytics will be displayed here after loading dictionary... </p>
                 </div>
             </div>
         </div>
@@ -1476,472 +1649,472 @@ flex-wrap: wrap;
     <div id="toast"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script>
-    // ==================== GLOBAL VARIABLES ====================
-    const fileInput = document.getElementById('fileInput');
-    const textArea = document.getElementById('textArea');
-    const preview = document.getElementById('preview');
-    const shortcutInput = document.getElementById('shortcutInput');
-    const valueInput = document.getElementById('valueInput');
-    const shortcutFilter = document.getElementById('shortcutFilter');
-    const valueFilter = document.getElementById('valueFilter');
-    const editShortcut = document.getElementById('editShortcut');
-    const editValue = document.getElementById('editValue');
-    const applyEditBtn = document.getElementById('applyEditBtn');
-    const stats = document.getElementById('stats');
-    const fileBtn = document.getElementById('fileBtn');
-    const fileName = document.getElementById('fileName');
-    const deleteBtn = document.getElementById('deleteBtn');
-    const toast = document.getElementById('toast');
-    const batchInput = document.getElementById('batchInput');
-    const batchPreview = document.getElementById('batchPreview');
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
+    <script>
+        // ==================== GLOBAL VARIABLES ====================
+        const fileInput = document.getElementById('fileInput');
+        const textArea = document.getElementById('textArea');
+        const preview = document.getElementById('preview');
+        const shortcutInput = document.getElementById('shortcutInput');
+        const valueInput = document.getElementById('valueInput');
+        const shortcutFilter = document.getElementById('shortcutFilter');
+        const valueFilter = document.getElementById('valueFilter');
+        const editShortcut = document.getElementById('editShortcut');
+        const editValue = document.getElementById('editValue');
+        const applyEditBtn = document.getElementById('applyEditBtn');
+        const stats = document.getElementById('stats');
+        const fileBtn = document.getElementById('fileBtn');
+        const fileName = document.getElementById('fileName');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const toast = document.getElementById('toast');
+        const batchInput = document.getElementById('batchInput');
+        const batchPreview = document.getElementById('batchPreview');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
 
-    let filteredLines = [];
-    let selectedIndex = -1;
-    let scrollToSelected = true;
-    let lastChangedIndex = -1;
-    let isFabOpen = false;
+        let filteredLines = [];
+        let selectedIndex = -1;
+        let scrollToSelected = true;
+        let lastChangedIndex = -1;
+        let isFabOpen = false;
 
-    // ==================== THEME MANAGEMENT ====================
-    function toggleTheme() {
-        const currentTheme = document.body.getAttribute('data-theme') || 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.body.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        showToast(`Theme changed to ${newTheme} mode`);
-    }
-
-    function changeTheme(theme) {
-        if (theme === 'auto') {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            document.body.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-        } else {
-            document.body.setAttribute('data-theme', theme);
+        // ==================== THEME MANAGEMENT ====================
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            showToast(`Theme changed to ${newTheme} mode`);
         }
-        localStorage.setItem('theme', theme);
-    }
 
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme') || 'auto';
-    changeTheme(savedTheme);
-    document.getElementById('themeSelect').value = savedTheme;
-
-    // ==================== TAB SYSTEM ====================
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Remove active class from all tabs
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            // Add active class to clicked tab
-            btn.classList.add('active');
-            const tabId = btn.getAttribute('data-tab') + '-tab';
-            document.getElementById(tabId).classList.add('active');
-            
-            // Update statistics if stats tab is opened
-            if (btn.getAttribute('data-tab') === 'stats') {
-                updateStatistics();
+        function changeTheme(theme) {
+            if (theme === 'auto') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.body.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+            } else {
+                document.body.setAttribute('data-theme', theme);
             }
-        });
-    });
-
-    // ==================== FAB ACTIONS ====================
-    function toggleQuickActions() {
-        const fabActions = document.getElementById('fabActions');
-        isFabOpen = !isFabOpen;
-        fabActions.classList.toggle('show', isFabOpen);
-    }
-
-    function quickAdd() {
-        document.querySelector('[data-tab="editor"]').click();
-        shortcutInput.focus();
-        showToast('Quick add mode activated');
-    }
-
-    function quickSearch() {
-        shortcutFilter.focus();
-        showToast('Quick search activated');
-    }
-
-    function quickExport() {
-        downloadZip();
-    }
-
-    // ==================== UTILITY FUNCTIONS ====================
-    function showToast(msg, type = 'info') {
-        toast.textContent = msg;
-        toast.style.background = type === 'error' ? 'var(--danger)' : 
-                              type === 'success' ? 'var(--success)' : 'var(--toast-bg)';
-        toast.classList.add('show');
-        setTimeout(() => { toast.classList.remove('show'); }, 3000);
-    }
-
-    function escapeHtml(text) {
-        return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    function updateProgress(percentage, text) {
-        progressFill.style.width = percentage + '%';
-        progressText.textContent = text;
-    }
-
-    // ==================== TEXTAREA CURSOR NAVIGATION ====================
-    function updateEditableFromTextarea() {
-        const cursorPos = textArea.selectionStart;
-        const lines = textArea.value.split('\n');
-        let cumulative = 0;
-        let lineIndex = 0;
-        
-        for (let i = 0; i < lines.length; i++) {
-            cumulative += lines[i].length + 1; // +1 for newline character
-            if (cursorPos <= cumulative) {
-                lineIndex = i;
-                break;
-            }
+            localStorage.setItem('theme', theme);
         }
-        
-        const line = lines[lineIndex];
-        const fi = filteredLines.indexOf(line);
-        selectedIndex = fi >= 0 ? fi : -1;
-        
-        // Scroll to the selected line in preview
-        if (selectedIndex >= 0) {
-            scrollToSelected = true;
-            updatePreview();
-            updateEditableFields();
-        }
-    }
 
-    // ==================== PREVIEW SYSTEM ====================
-    function updatePreview() {
-        const lines = textArea.value.split('\n').filter(line => line.trim());
-        const counts = {};
-        lines.forEach(line => {
-            const sc = line.split('\t')[0];
-            if (sc) counts[sc] = (counts[sc] || 0) + 1;
-        });
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'auto';
+        changeTheme(savedTheme);
+        document.getElementById('themeSelect').value = savedTheme;
 
-        const sFilter = shortcutFilter.value.toLowerCase();
-        const vFilter = valueFilter.value.toLowerCase();
-        const filterType = document.getElementById('filterType').value;
-        const sortBy = document.getElementById('sortBy').value;
+        // ==================== TAB SYSTEM ====================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-        // Apply filters
-        filteredLines = lines.filter(line => {
-            const parts = line.split('\t');
-            const sc = parts[0]?.toLowerCase() || '';
-            const val = parts[1]?.toLowerCase() || '';
+                // Add active class to clicked tab
+                btn.classList.add('active');
+                const tabId = btn.getAttribute('data-tab') + '-tab';
+                document.getElementById(tabId).classList.add('active');
 
-            let scMatch = false, valMatch = false;
-
-            switch(filterType) {
-                case 'startsWith':
-                    scMatch = sc.startsWith(sFilter);
-                    valMatch = val.startsWith(vFilter);
-                    break;
-                case 'endsWith':
-                    scMatch = sc.endsWith(sFilter);
-                    valMatch = val.endsWith(vFilter);
-                    break;
-                default: // contains
-                    scMatch = sc.includes(sFilter);
-                    valMatch = val.includes(vFilter);
-            }
-
-            return scMatch && valMatch;
-        });
-
-        // Apply sorting
-        filteredLines.sort((a, b) => {
-            const aParts = a.split('\t');
-            const bParts = b.split('\t');
-            
-            switch(sortBy) {
-                case 'shortcut-desc':
-                    return (bParts[0] || '').localeCompare(aParts[0] || '');
-                case 'value':
-                    return (aParts[1] || '').localeCompare(bParts[1] || '');
-                default: // shortcut
-                    return (aParts[0] || '').localeCompare(bParts[0] || '');
-            }
-        });
-
-        // Store previous classes
-        const prevClasses = [];
-        Array.from(preview.children).forEach(div => {
-            prevClasses.push({
-                sc: div.querySelector(".shortcut")?.textContent,
-                cls: div.className
+                // Update statistics if stats tab is opened
+                if (btn.getAttribute('data-tab') === 'stats') {
+                    updateStatistics();
+                }
             });
         });
 
-        // Generate preview HTML
-        preview.innerHTML = filteredLines.map((line, i) => {
-            const parts = line.split('\t');
-            const sc = parts[0] || '', val = parts[1] || '';
-            const isDup = counts[sc] > 1, isSelected = i === selectedIndex;
+        // ==================== FAB ACTIONS ====================
+        function toggleQuickActions() {
+            const fabActions = document.getElementById('fabActions');
+            isFabOpen = !isFabOpen;
+            fabActions.classList.toggle('show', isFabOpen);
+        }
 
-            // Check previous class
-            const prev = prevClasses.find(p => p.sc === sc);
-            let cls = isSelected ? 'selected' : '';
-            if (isDup) cls += ' highlight';
-            if (prev) cls += ' ' + prev.cls.replace('selected', '').replace('highlight', '').trim();
+        function quickAdd() {
+            document.querySelector('[data-tab="editor"]').click();
+            shortcutInput.focus();
+            showToast('Quick add mode activated');
+        }
 
-            return `<div class="${cls}" data-index="${i}">
+        function quickSearch() {
+            shortcutFilter.focus();
+            showToast('Quick search activated');
+        }
+
+        function quickExport() {
+            downloadZip();
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function showToast(msg, type = 'info') {
+            toast.textContent = msg;
+            toast.style.background = type === 'error' ? 'var(--danger)' :
+                type === 'success' ? 'var(--success)' : 'var(--toast-bg)';
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function updateProgress(percentage, text) {
+            progressFill.style.width = percentage + '%';
+            progressText.textContent = text;
+        }
+
+        // ==================== TEXTAREA CURSOR NAVIGATION ====================
+        function updateEditableFromTextarea() {
+            const cursorPos = textArea.selectionStart;
+            const lines = textArea.value.split('\n');
+            let cumulative = 0;
+            let lineIndex = 0;
+
+            for (let i = 0; i < lines.length; i++) {
+                cumulative += lines[i].length + 1; // +1 for newline character
+                if (cursorPos <= cumulative) {
+                    lineIndex = i;
+                    break;
+                }
+            }
+
+            const line = lines[lineIndex];
+            const fi = filteredLines.indexOf(line);
+            selectedIndex = fi >= 0 ? fi : -1;
+
+            // Scroll to the selected line in preview
+            if (selectedIndex >= 0) {
+                scrollToSelected = true;
+                updatePreview();
+                updateEditableFields();
+            }
+        }
+
+        // ==================== PREVIEW SYSTEM ====================
+        function updatePreview() {
+            const lines = textArea.value.split('\n').filter(line => line.trim());
+            const counts = {};
+            lines.forEach(line => {
+                const sc = line.split('\t')[0];
+                if (sc) counts[sc] = (counts[sc] || 0) + 1;
+            });
+
+            const sFilter = shortcutFilter.value.toLowerCase();
+            const vFilter = valueFilter.value.toLowerCase();
+            const filterType = document.getElementById('filterType').value;
+            const sortBy = document.getElementById('sortBy').value;
+
+            // Apply filters
+            filteredLines = lines.filter(line => {
+                const parts = line.split('\t');
+                const sc = parts[0]?.toLowerCase() || '';
+                const val = parts[1]?.toLowerCase() || '';
+
+                let scMatch = false, valMatch = false;
+
+                switch (filterType) {
+                    case 'startsWith':
+                        scMatch = sc.startsWith(sFilter);
+                        valMatch = val.startsWith(vFilter);
+                        break;
+                    case 'endsWith':
+                        scMatch = sc.endsWith(sFilter);
+                        valMatch = val.endsWith(vFilter);
+                        break;
+                    default: // contains
+                        scMatch = sc.includes(sFilter);
+                        valMatch = val.includes(vFilter);
+                }
+
+                return scMatch && valMatch;
+            });
+
+            // Apply sorting
+            filteredLines.sort((a, b) => {
+                const aParts = a.split('\t');
+                const bParts = b.split('\t');
+
+                switch (sortBy) {
+                    case 'shortcut-desc':
+                        return (bParts[0] || '').localeCompare(aParts[0] || '');
+                    case 'value':
+                        return (aParts[1] || '').localeCompare(bParts[1] || '');
+                    default: // shortcut
+                        return (aParts[0] || '').localeCompare(bParts[0] || '');
+                }
+            });
+
+            // Store previous classes
+            const prevClasses = [];
+            Array.from(preview.children).forEach(div => {
+                prevClasses.push({
+                    sc: div.querySelector(".shortcut")?.textContent,
+                    cls: div.className
+                });
+            });
+
+            // Generate preview HTML
+            preview.innerHTML = filteredLines.map((line, i) => {
+                const parts = line.split('\t');
+                const sc = parts[0] || '', val = parts[1] || '';
+                const isDup = counts[sc] > 1, isSelected = i === selectedIndex;
+
+                // Check previous class
+                const prev = prevClasses.find(p => p.sc === sc);
+                let cls = isSelected ? 'selected' : '';
+                if (isDup) cls += ' highlight';
+                if (prev) cls += ' ' + prev.cls.replace('selected', '').replace('highlight', '').trim();
+
+                return `<div class="${cls}" data-index="${i}">
                 <span class="shortcut">${escapeHtml(sc)}</span>
                 <span class="value">${escapeHtml(val)}</span>
             </div>`;
-        }).join('');
+            }).join('');
 
-        // Update statistics
-        let dup = 0;
-        for (let k in counts) if (counts[k] > 1) dup += counts[k] - 1;
+            // Update statistics
+            let dup = 0;
+            for (let k in counts) if (counts[k] > 1) dup += counts[k] - 1;
 
-        const lineNumberText = selectedIndex >= 0 ? `Line: ${selectedIndex + 1} | ` : '';
-        stats.textContent = `${lineNumberText}Total: ${lines.length} | Duplicates: ${dup} | Filtered: ${filteredLines.length}`;
+            const lineNumberText = selectedIndex >= 0 ? `Line: ${selectedIndex + 1} | ` : '';
+            stats.textContent = `${lineNumberText}Total: ${lines.length} | Duplicates: ${dup} | Filtered: ${filteredLines.length}`;
 
-        updateEditableFields();
-        updateProgress((filteredLines.length / Math.max(lines.length, 1)) * 100, `${filteredLines.length} entries displayed`);
+            updateEditableFields();
+            updateProgress((filteredLines.length / Math.max(lines.length, 1)) * 100, `${filteredLines.length} entries displayed`);
 
-        // Scroll to selected line in preview
-        if (scrollToSelected && selectedIndex >= 0) {
-            const child = preview.children[selectedIndex];
-            if (child) {
-                // Scroll the selected line to top of preview
-                preview.scrollTop = child.offsetTop - preview.offsetTop;
+            // Scroll to selected line in preview
+            if (scrollToSelected && selectedIndex >= 0) {
+                const child = preview.children[selectedIndex];
+                if (child) {
+                    // Scroll the selected line to top of preview
+                    preview.scrollTop = child.offsetTop - preview.offsetTop;
+                }
+            }
+            scrollToSelected = true;
+        }
+
+        function updateEditableFields() {
+            if (selectedIndex >= 0 && filteredLines[selectedIndex]) {
+                const parts = filteredLines[selectedIndex].split('\t');
+                editShortcut.value = parts[0] || '';
+                editValue.value = parts[1] || '';
+            } else {
+                editShortcut.value = '';
+                editValue.value = '';
             }
         }
-        scrollToSelected = true;
-    }
 
-    function updateEditableFields() {
-        if (selectedIndex >= 0 && filteredLines[selectedIndex]) {
-            const parts = filteredLines[selectedIndex].split('\t');
-            editShortcut.value = parts[0] || '';
-            editValue.value = parts[1] || '';
-        } else {
-            editShortcut.value = '';
-            editValue.value = '';
-        }
-    }
+        // ==================== FILE HANDLING ====================
+        fileBtn.addEventListener('click', () => fileInput.click());
 
-    // ==================== FILE HANDLING ====================
-    fileBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (!file) return;
 
-    fileInput.addEventListener('change', () => {
-        const file = fileInput.files[0];
-        if (!file) return;
+            fileName.textContent = file.name;
+            updateProgress(0, 'Loading file...');
 
-        fileName.textContent = file.name;
-        updateProgress(0, 'Loading file...');
+            const reader = new FileReader();
 
-        const reader = new FileReader();
-
-        if (file.name.endsWith('.txt')) {
-            reader.onload = e => {
-                textArea.value = e.target.result;
-                updatePreview();
-                updateSuggestions();
-                updateStatistics();
-                updateProgress(100, 'File loaded successfully');
-                showToast('Text file loaded successfully', 'success');
-            };
-            reader.readAsText(file);
-        } else if (file.name.endsWith('.zip')) {
-            reader.onload = e => {
-                JSZip.loadAsync(e.target.result).then(zip => {
-                    const dictFile = zip.file("dictionary.txt");
-                    if (dictFile) {
-                        dictFile.async("string").then(content => {
-                            textArea.value = content;
-                            updatePreview();
-                            updateSuggestions();
-                            updateStatistics();
-                            updateProgress(100, 'ZIP file extracted successfully');
-                            showToast('ZIP file extracted successfully', 'success');
-                        });
-                    } else {
-                        showToast("No dictionary.txt found in ZIP file", 'error');
-                    }
-                });
-            };
-            reader.readAsArrayBuffer(file);
-        }
-    });
-
-    // ==================== SUGGESTIONS SYSTEM ====================
-    function updateSuggestions() {
-        const lines = textArea.value.split('\n');
-        const sSet = new Set(), vSet = new Set();
-
-        lines.forEach(line => {
-            const p = line.split('\t');
-            if (p[0]) sSet.add(p[0].trim());
-            if (p[1]) vSet.add(p[1].trim());
-        });
-
-        const shortcutList = document.getElementById('shortcutSuggestions');
-        const valueList = document.getElementById('valueSuggestions');
-        shortcutList.innerHTML = '';
-        valueList.innerHTML = '';
-
-        Array.from(sSet).sort().forEach(s => {
-            const opt = document.createElement('option');
-            opt.value = s;
-            shortcutList.appendChild(opt);
-        });
-
-        Array.from(vSet).sort().forEach(v => {
-            const opt = document.createElement('option');
-            opt.value = v;
-            valueList.appendChild(opt);
-        });
-    }
-
-    // ==================== LINE OPERATIONS ====================
-    function removeEmptyLines() {
-        textArea.value = textArea.value.split('\n').filter(l => l.trim() !== '').join('\n');
-        updatePreview();
-        updateSuggestions();
-        updateStatistics();
-        showToast("Empty lines removed!", 'success');
-    }
-
-    function removeDuplicates() {
-        const seen = new Set();
-        const lines = textArea.value.split('\n');
-        const result = [];
-        
-        lines.forEach(line => {
-            const sc = line.split('\t')[0];
-            if (!seen.has(sc)) {
-                seen.add(sc);
-                result.push(line);
+            if (file.name.endsWith('.txt')) {
+                reader.onload = e => {
+                    textArea.value = e.target.result;
+                    updatePreview();
+                    updateSuggestions();
+                    updateStatistics();
+                    updateProgress(100, 'File loaded successfully');
+                    showToast('Text file loaded successfully', 'success');
+                };
+                reader.readAsText(file);
+            } else if (file.name.endsWith('.zip')) {
+                reader.onload = e => {
+                    JSZip.loadAsync(e.target.result).then(zip => {
+                        const dictFile = zip.file("dictionary.txt");
+                        if (dictFile) {
+                            dictFile.async("string").then(content => {
+                                textArea.value = content;
+                                updatePreview();
+                                updateSuggestions();
+                                updateStatistics();
+                                updateProgress(100, 'ZIP file extracted successfully');
+                                showToast('ZIP file extracted successfully', 'success');
+                            });
+                        } else {
+                            showToast("No dictionary.txt found in ZIP file", 'error');
+                        }
+                    });
+                };
+                reader.readAsArrayBuffer(file);
             }
         });
-        
-        textArea.value = result.join('\n');
-        updatePreview();
-        updateSuggestions();
-        updateStatistics();
-        showToast("Duplicates removed!", 'success');
-    }
 
-    function removeExtraSpaces() {
-        const lines = textArea.value.split('\n');
-        const cleaned = lines.map(line => line.split('\t').map(p => p.trim()).join('\t'));
-        textArea.value = cleaned.join('\n');
-        updatePreview();
-        updateSuggestions();
-        showToast("Extra spaces cleaned!", 'success');
-    }
+        // ==================== SUGGESTIONS SYSTEM ====================
+        function updateSuggestions() {
+            const lines = textArea.value.split('\n');
+            const sSet = new Set(), vSet = new Set();
 
-    function sortLines() {
-        const lines = textArea.value.split('\n');
-        const comments = lines.filter(l => l.trim().startsWith('#'));
-        const normal = lines.filter(l => !l.trim().startsWith('#'));
-        normal.sort((a, b) => (a.split('\t')[0] || '').localeCompare(b.split('\t')[0] || ''));
-        textArea.value = [...comments, ...normal].join('\n');
-        updatePreview();
-        updateSuggestions();
-        showToast("Lines sorted alphabetically!", 'success');
-    }
+            lines.forEach(line => {
+                const p = line.split('\t');
+                if (p[0]) sSet.add(p[0].trim());
+                if (p[1]) vSet.add(p[1].trim());
+            });
 
-    // ==================== ENTRY MANAGEMENT ====================
-    function addEntry() {
-        const sc = shortcutInput.value.trim();
-        const val = valueInput.value.trim();
-        if (!sc || !val) return showToast('Please enter both shortcut and value!', 'error');
+            const shortcutList = document.getElementById('shortcutSuggestions');
+            const valueList = document.getElementById('valueSuggestions');
+            shortcutList.innerHTML = '';
+            valueList.innerHTML = '';
 
-        const newEntry = `${sc}\t${val}\ten-US\t`;
-        textArea.value += (textArea.value ? '\n' : '') + newEntry;
-        shortcutInput.value = valueInput.value = '';
-        updatePreview();
-        updateSuggestions();
-        updateStatistics();
-        shortcutInput.focus();
-        showToast("New entry added!", 'success');
+            Array.from(sSet).sort().forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s;
+                shortcutList.appendChild(opt);
+            });
 
-        selectedIndex = filteredLines.length - 1;
-        lastChangedIndex = selectedIndex;
-        const newDiv = preview.children[selectedIndex];
-        if (newDiv) newDiv.classList.add('new-entry');
-    }
-
-    applyEditBtn.addEventListener('click', () => {
-        if (selectedIndex < 0) return showToast("No entry selected!", 'error');
-        const lines = textArea.value.split('\n');
-        const targetLine = filteredLines[selectedIndex];
-        const indexInAll = lines.indexOf(targetLine);
-        if (indexInAll < 0) return;
-        
-        lines[indexInAll] = `${editShortcut.value}\t${editValue.value}\ten-US\t`;
-        textArea.value = lines.join('\n');
-        updatePreview();
-        updateSuggestions();
-        updateStatistics();
-        showToast("Entry updated!", 'success');
-
-        const editedDiv = preview.children[selectedIndex];
-        if (editedDiv) {
-            editedDiv.classList.remove('new-entry');
-            editedDiv.classList.add('edited-entry');
-            lastChangedIndex = selectedIndex;
+            Array.from(vSet).sort().forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v;
+                valueList.appendChild(opt);
+            });
         }
-    });
 
-    function deleteEntry() {
-        if (selectedIndex < 0) return showToast("No entry selected!", 'error');
-        const lines = textArea.value.split('\n');
-        const targetLine = filteredLines[selectedIndex];
-        const indexInAll = lines.indexOf(targetLine);
-        if (indexInAll >= 0) {
-            lines.splice(indexInAll, 1);
-            textArea.value = lines.join('\n');
-            selectedIndex = -1;
+        // ==================== LINE OPERATIONS ====================
+        function removeEmptyLines() {
+            textArea.value = textArea.value.split('\n').filter(l => l.trim() !== '').join('\n');
             updatePreview();
             updateSuggestions();
             updateStatistics();
-            showToast("Entry deleted!", 'success');
+            showToast("Empty lines removed!", 'success');
         }
-    }
 
-    deleteBtn.addEventListener('click', deleteEntry);
+        function removeDuplicates() {
+            const seen = new Set();
+            const lines = textArea.value.split('\n');
+            const result = [];
 
-    function goToLastChange() {
-        if (lastChangedIndex >= 0 && lastChangedIndex < filteredLines.length) {
-            selectedIndex = lastChangedIndex;
-            scrollToSelected = true;
+            lines.forEach(line => {
+                const sc = line.split('\t')[0];
+                if (!seen.has(sc)) {
+                    seen.add(sc);
+                    result.push(line);
+                }
+            });
+
+            textArea.value = result.join('\n');
             updatePreview();
-            updateEditableFields();
-            showToast("Jumped to last changed entry!", 'success');
-        } else {
-            showToast("No changes to jump to!", 'error');
+            updateSuggestions();
+            updateStatistics();
+            showToast("Duplicates removed!", 'success');
         }
-    }
 
-    // ==================== BATCH OPERATIONS ====================
-    function validateBatch() {
-        const input = batchInput.value.trim();
-        if (!input) return showToast("Please enter some entries!", 'error');
-        
-        const lines = input.split('\n').filter(line => line.trim());
-        const valid = [];
-        const errors = [];
-        
-        lines.forEach((line, index) => {
-            const match = line.match(/^([^=]+)=(.+)$/);
-            if (match) {
-                valid.push({ shortcut: match[1].trim(), value: match[2].trim() });
-            } else {
-                errors.push(`Line ${index + 1}: Invalid format`);
+        function removeExtraSpaces() {
+            const lines = textArea.value.split('\n');
+            const cleaned = lines.map(line => line.split('\t').map(p => p.trim()).join('\t'));
+            textArea.value = cleaned.join('\n');
+            updatePreview();
+            updateSuggestions();
+            showToast("Extra spaces cleaned!", 'success');
+        }
+
+        function sortLines() {
+            const lines = textArea.value.split('\n');
+            const comments = lines.filter(l => l.trim().startsWith('#'));
+            const normal = lines.filter(l => !l.trim().startsWith('#'));
+            normal.sort((a, b) => (a.split('\t')[0] || '').localeCompare(b.split('\t')[0] || ''));
+            textArea.value = [...comments, ...normal].join('\n');
+            updatePreview();
+            updateSuggestions();
+            showToast("Lines sorted alphabetically!", 'success');
+        }
+
+        // ==================== ENTRY MANAGEMENT ====================
+        function addEntry() {
+            const sc = shortcutInput.value.trim();
+            const val = valueInput.value.trim();
+            if (!sc || !val) return showToast('Please enter both shortcut and value!', 'error');
+
+            const newEntry = `${sc}\t${val}\ten-US\t`;
+            textArea.value += (textArea.value ? '\n' : '') + newEntry;
+            shortcutInput.value = valueInput.value = '';
+            updatePreview();
+            updateSuggestions();
+            updateStatistics();
+            shortcutInput.focus();
+            showToast("New entry added!", 'success');
+
+            selectedIndex = filteredLines.length - 1;
+            lastChangedIndex = selectedIndex;
+            const newDiv = preview.children[selectedIndex];
+            if (newDiv) newDiv.classList.add('new-entry');
+        }
+
+        applyEditBtn.addEventListener('click', () => {
+            if (selectedIndex < 0) return showToast("No entry selected!", 'error');
+            const lines = textArea.value.split('\n');
+            const targetLine = filteredLines[selectedIndex];
+            const indexInAll = lines.indexOf(targetLine);
+            if (indexInAll < 0) return;
+
+            lines[indexInAll] = `${editShortcut.value}\t${editValue.value}\ten-US\t`;
+            textArea.value = lines.join('\n');
+            updatePreview();
+            updateSuggestions();
+            updateStatistics();
+            showToast("Entry updated!", 'success');
+
+            const editedDiv = preview.children[selectedIndex];
+            if (editedDiv) {
+                editedDiv.classList.remove('new-entry');
+                editedDiv.classList.add('edited-entry');
+                lastChangedIndex = selectedIndex;
             }
         });
-        
-        batchPreview.style.display = 'block';
-        batchPreview.innerHTML = `
+
+        function deleteEntry() {
+            if (selectedIndex < 0) return showToast("No entry selected!", 'error');
+            const lines = textArea.value.split('\n');
+            const targetLine = filteredLines[selectedIndex];
+            const indexInAll = lines.indexOf(targetLine);
+            if (indexInAll >= 0) {
+                lines.splice(indexInAll, 1);
+                textArea.value = lines.join('\n');
+                selectedIndex = -1;
+                updatePreview();
+                updateSuggestions();
+                updateStatistics();
+                showToast("Entry deleted!", 'success');
+            }
+        }
+
+        deleteBtn.addEventListener('click', deleteEntry);
+
+        function goToLastChange() {
+            if (lastChangedIndex >= 0 && lastChangedIndex < filteredLines.length) {
+                selectedIndex = lastChangedIndex;
+                scrollToSelected = true;
+                updatePreview();
+                updateEditableFields();
+                showToast("Jumped to last changed entry!", 'success');
+            } else {
+                showToast("No changes to jump to!", 'error');
+            }
+        }
+
+        // ==================== BATCH OPERATIONS ====================
+        function validateBatch() {
+            const input = batchInput.value.trim();
+            if (!input) return showToast("Please enter some entries!", 'error');
+
+            const lines = input.split('\n').filter(line => line.trim());
+            const valid = [];
+            const errors = [];
+
+            lines.forEach((line, index) => {
+                const match = line.match(/^([^=]+)=(.+)$/);
+                if (match) {
+                    valid.push({ shortcut: match[1].trim(), value: match[2].trim() });
+                } else {
+                    errors.push(`Line ${index + 1}: Invalid format`);
+                }
+            });
+
+            batchPreview.style.display = 'block';
+            batchPreview.innerHTML = `
             <h4>Validation Results</h4>
             <p>✅ Valid entries: ${valid.length}</p>
             <p>❌ Errors: ${errors.length}</p>
@@ -1950,78 +2123,78 @@ flex-wrap: wrap;
             </div>` : ''}
             ${valid.length ? `<div style="margin-top: 10px;">
                 <strong>Preview:</strong><br>
-                ${valid.slice(0, 5).map(entry => 
-                    `<code>${entry.shortcut} = ${entry.value}</code>`
-                ).join('<br>')}
+                ${valid.slice(0, 5).map(entry =>
+                `<code>${entry.shortcut} = ${entry.value}</code>`
+            ).join('<br>')}
                 ${valid.length > 5 ? '<br>... and ' + (valid.length - 5) + ' more' : ''}
             </div>` : ''}
         `;
-    }
+        }
 
-    function importBatch() {
-        const input = batchInput.value.trim();
-        if (!input) return showToast("No entries to import!", 'error');
-        
-        const lines = input.split('\n').filter(line => line.trim());
-        let imported = 0;
-        
-        lines.forEach(line => {
-            const match = line.match(/^([^=]+)=(.+)$/);
-            if (match) {
-                const newEntry = `${match[1].trim()}\t${match[2].trim()}\ten-US\t`;
-                textArea.value += (textArea.value ? '\n' : '') + newEntry;
-                imported++;
-            }
-        });
-        
-        batchInput.value = '';
-        batchPreview.style.display = 'none';
-        updatePreview();
-        updateSuggestions();
-        updateStatistics();
-        showToast(`Imported ${imported} entries successfully!`, 'success');
-    }
+        function importBatch() {
+            const input = batchInput.value.trim();
+            if (!input) return showToast("No entries to import!", 'error');
 
-    function generateFromText() {
-        // Simple auto-generation - you can enhance this with AI/ML
-        const text = batchInput.value.trim();
-        if (!text) return showToast("Please enter some text!", 'error');
-        
-        const words = text.split(/\s+/).filter(word => word.length > 3);
-        const generated = words.map(word => {
-            const shortcut = word.substring(0, 3).toLowerCase();
-            return `${shortcut}=${word}`;
-        });
-        
-        batchInput.value = generated.join('\n');
-        showToast(`Generated ${generated.length} suggestions!`, 'success');
-    }
+            const lines = input.split('\n').filter(line => line.trim());
+            let imported = 0;
 
-    // ==================== STATISTICS ====================
-    function updateStatistics() {
-        const lines = textArea.value.split('\n').filter(line => line.trim());
-        const shortcuts = new Set();
-        let totalLength = 0;
-        
-        lines.forEach(line => {
-            const parts = line.split('\t');
-            if (parts[0]) {
-                shortcuts.add(parts[0]);
-                totalLength += parts[0].length;
-            }
-        });
-        
-        document.getElementById('totalEntries').textContent = lines.length;
-        document.getElementById('uniqueShortcuts').textContent = shortcuts.size;
-        document.getElementById('avgLength').textContent = shortcuts.size ? 
-            (totalLength / shortcuts.size).toFixed(1) : '0';
-        document.getElementById('coverage').textContent = 
-            Math.min((shortcuts.size / 1000) * 100, 100).toFixed(1) + '%';
-        
-        // Update analytics content
-        const analyticsContent = document.getElementById('analyticsContent');
-        if (lines.length > 0) {
-            analyticsContent.innerHTML = `
+            lines.forEach(line => {
+                const match = line.match(/^([^=]+)=(.+)$/);
+                if (match) {
+                    const newEntry = `${match[1].trim()}\t${match[2].trim()}\ten-US\t`;
+                    textArea.value += (textArea.value ? '\n' : '') + newEntry;
+                    imported++;
+                }
+            });
+
+            batchInput.value = '';
+            batchPreview.style.display = 'none';
+            updatePreview();
+            updateSuggestions();
+            updateStatistics();
+            showToast(`Imported ${imported} entries successfully!`, 'success');
+        }
+
+        function generateFromText() {
+            // Simple auto-generation - you can enhance this with AI/ML
+            const text = batchInput.value.trim();
+            if (!text) return showToast("Please enter some text!", 'error');
+
+            const words = text.split(/\s+/).filter(word => word.length > 3);
+            const generated = words.map(word => {
+                const shortcut = word.substring(0, 3).toLowerCase();
+                return `${shortcut}=${word}`;
+            });
+
+            batchInput.value = generated.join('\n');
+            showToast(`Generated ${generated.length} suggestions!`, 'success');
+        }
+
+        // ==================== STATISTICS ====================
+        function updateStatistics() {
+            const lines = textArea.value.split('\n').filter(line => line.trim());
+            const shortcuts = new Set();
+            let totalLength = 0;
+
+            lines.forEach(line => {
+                const parts = line.split('\t');
+                if (parts[0]) {
+                    shortcuts.add(parts[0]);
+                    totalLength += parts[0].length;
+                }
+            });
+
+            document.getElementById('totalEntries').textContent = lines.length;
+            document.getElementById('uniqueShortcuts').textContent = shortcuts.size;
+            document.getElementById('avgLength').textContent = shortcuts.size ?
+                (totalLength / shortcuts.size).toFixed(1) : '0';
+            document.getElementById('coverage').textContent =
+                Math.min((shortcuts.size / 1000) * 100, 100).toFixed(1) + '%';
+
+            // Update analytics content
+            const analyticsContent = document.getElementById('analyticsContent');
+            if (lines.length > 0) {
+                analyticsContent.innerHTML = `
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number">${Math.round(lines.length / 10)}</div>
@@ -2037,12 +2210,12 @@ flex-wrap: wrap;
                     </div>
                 </div>
             `;
+            }
         }
-    }
 
-    // ==================== TEMPLATES ====================
-    const templates = {
-        countries: `bd=Bangladesh
+        // ==================== TEMPLATES ====================
+        const templates = {
+            countries: `bd=Bangladesh
 usa=United States of America
 uk=United Kingdom
 ca=Canada
@@ -2053,19 +2226,19 @@ kr=South Korea
 cn=China
 de=Germany`,
 
-        emails: `eml=email
+            emails: `eml=email
 ceml=company email
 peml=personal email
 oeml=official email
 weml=work email`,
 
-        addresses: `addr=address
+            addresses: `addr=address
 haddr=home address
 oaddr=office address
 baddr=billing address
 saddr=shipping address`,
 
-        programming: `fn=function
+            programming: `fn=function
 cls=class
 var=variable
 const=constant
@@ -2075,304 +2248,305 @@ str=string
 num=number
 bool=boolean`,
 
-        business: `com=company
+            business: `com=company
 corp=corporation
 inc=incorporated
 ltd=limited
 co=company
 biz=business`,
 
-        academic: `edu=education
+            academic: `edu=education
 uni=university
 col=college
 sch=school
 prof=professor
 doc=doctor
 phd=Doctor of Philosophy`
-    };
+        };
 
-    function loadTemplate(templateName) {
-        if (templates[templateName]) {
-            batchInput.value = templates[templateName];
-            document.querySelector('[data-tab="batch"]').click();
-            showToast(`Loaded ${templateName} template!`, 'success');
-        }
-    }
-
-    function saveTemplate() {
-        const name = document.getElementById('templateName').value.trim();
-        if (!name) return showToast("Please enter a template name!", 'error');
-        if (!textArea.value.trim()) return showToast("No content to save as template!", 'error');
-        
-        templates[name] = textArea.value;
-        localStorage.setItem('customTemplates', JSON.stringify(templates));
-        showToast(`Template "${name}" saved successfully!`, 'success');
-    }
-
-    // Load custom templates from localStorage
-    const savedTemplates = localStorage.getItem('customTemplates');
-    if (savedTemplates) {
-        Object.assign(templates, JSON.parse(savedTemplates));
-    }
-
-    // ==================== TELEGRAM SETTINGS ====================
-    function saveTelegramSettings() {
-        const botToken = document.getElementById('botToken').value;
-        const chatId = document.getElementById('chatId').value;
-        
-        if (botToken && chatId) {
-            localStorage.setItem('telegramBotToken', botToken);
-            localStorage.setItem('telegramChatId', chatId);
-            showToast("Telegram settings saved!", 'success');
-        } else {
-            showToast("Please enter both Bot Token and Chat ID!", 'error');
-        }
-    }
-
-    async function sendToTelegram() {
-        const BOT_TOKEN = localStorage.getItem('telegramBotToken') || "YOUR_BOT_TOKEN";
-        const CHAT_ID = localStorage.getItem('telegramChatId') || "YOUR_CHAT_ID";
-        
-        if (BOT_TOKEN === "YOUR_BOT_TOKEN") {
-            showToast("Please configure Telegram settings first!", 'error');
-            document.querySelector('[data-tab="settings"]').click();
-            return;
+        function loadTemplate(templateName) {
+            if (templates[templateName]) {
+                batchInput.value = templates[templateName];
+                document.querySelector('[data-tab="batch"]').click();
+                showToast(`Loaded ${templateName} template!`, 'success');
+            }
         }
 
-        const textContent = textArea.value || "File is empty!";
-        const blob = new Blob([textContent], { type: 'text/plain' });
-        const formData = new FormData();
-        formData.append("chat_id", CHAT_ID);
-        formData.append("document", blob, "dictionary.txt");
+        function saveTemplate() {
+            const name = document.getElementById('templateName').value.trim();
+            if (!name) return showToast("Please enter a template name!", 'error');
+            if (!textArea.value.trim()) return showToast("No content to save as template!", 'error');
 
-        try {
-            showToast("Sending to Telegram...", 'info');
-            const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
-                method: "POST",
-                body: formData
-            });
-            if (res.ok) {
-                showToast("✅ File sent to Telegram!", 'success');
+            templates[name] = textArea.value;
+            localStorage.setItem('customTemplates', JSON.stringify(templates));
+            showToast(`Template "${name}" saved successfully!`, 'success');
+        }
+
+        // Load custom templates from localStorage
+        const savedTemplates = localStorage.getItem('customTemplates');
+        if (savedTemplates) {
+            Object.assign(templates, JSON.parse(savedTemplates));
+        }
+
+        // ==================== TELEGRAM SETTINGS ====================
+        function saveTelegramSettings() {
+            const botToken = document.getElementById('botToken').value;
+            const chatId = document.getElementById('chatId').value;
+
+            if (botToken && chatId) {
+                localStorage.setItem('telegramBotToken', botToken);
+                localStorage.setItem('telegramChatId', chatId);
+                showToast("Telegram settings saved!", 'success');
             } else {
-                showToast("⚠️ Failed to send file!", 'error');
+                showToast("Please enter both Bot Token and Chat ID!", 'error');
             }
-        } catch (err) {
-            console.error(err);
-            showToast("❌ Error sending file!", 'error');
         }
-    }
 
-    // ==================== ALPHABET BAR ====================
-    function initAlphabetBar() {
-        const alphabetBar = document.getElementById("alphabetBar");
-        alphabetBar.innerHTML = '';
-        
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(letter => {
-            const span = document.createElement("span");
-            span.textContent = letter;
-            span.addEventListener("click", () => jumpToLetter(letter.toLowerCase()));
-            alphabetBar.appendChild(span);
+        async function sendToTelegram() {
+            const BOT_TOKEN = localStorage.getItem('telegramBotToken') || "YOUR_BOT_TOKEN";
+            const CHAT_ID = localStorage.getItem('telegramChatId') || "YOUR_CHAT_ID";
+
+            if (BOT_TOKEN === "YOUR_BOT_TOKEN") {
+                showToast("Please configure Telegram settings first!", 'error');
+                document.querySelector('[data-tab="settings"]').click();
+                return;
+            }
+
+            const textContent = textArea.value || "File is empty!";
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const formData = new FormData();
+            formData.append("chat_id", CHAT_ID);
+            formData.append("document", blob, "dictionary.txt");
+
+            try {
+                showToast("Sending to Telegram...", 'info');
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+                    method: "POST",
+                    body: formData
+                });
+                if (res.ok) {
+                    showToast("✅ File sent to Telegram!", 'success');
+                } else {
+                    showToast("⚠️ Failed to send file!", 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("❌ Error sending file!", 'error');
+            }
+        }
+
+        // ==================== ALPHABET BAR ====================
+        function initAlphabetBar() {
+            const alphabetBar = document.getElementById("alphabetBar");
+            alphabetBar.innerHTML = '';
+
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(letter => {
+                const span = document.createElement("span");
+                span.textContent = letter;
+                span.addEventListener("click", () => jumpToLetter(letter.toLowerCase()));
+                alphabetBar.appendChild(span);
+            });
+        }
+
+        function jumpToLetter(letter) {
+            for (let i = 0; i < preview.children.length; i++) {
+                const sc = preview.children[i].querySelector(".shortcut")?.textContent.toLowerCase();
+                if (sc && sc.startsWith(letter)) {
+                    selectedIndex = i;
+                    scrollToSelected = true;
+                    updatePreview();
+                    updateEditableFields();
+                    showToast(`Jumped to entries starting with "${letter}"`);
+                    break;
+                }
+            }
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        textArea.addEventListener('click', updateEditableFromTextarea);
+        textArea.addEventListener('keyup', updateEditableFromTextarea);
+        textArea.addEventListener('input', updateEditableFromTextarea);
+
+        // Enhanced keyboard navigation for textarea
+        textArea.addEventListener('keydown', function (e) {
+            // Handle arrow keys in textarea
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                // Let the cursor move first, then update selection
+                setTimeout(() => {
+                    updateEditableFromTextarea();
+                }, 10);
+            }
         });
-    }
 
-    function jumpToLetter(letter) {
-        for (let i = 0; i < preview.children.length; i++) {
-            const sc = preview.children[i].querySelector(".shortcut")?.textContent.toLowerCase();
-            if (sc && sc.startsWith(letter)) {
-                selectedIndex = i;
-                scrollToSelected = true;
-                updatePreview();
-                updateEditableFields();
-                showToast(`Jumped to entries starting with "${letter}"`);
-                break;
-            }
-        }
-    }
+        shortcutFilter.addEventListener('input', () => {
+            selectedIndex = -1;
+            updatePreview();
+        });
 
-    // ==================== EVENT LISTENERS ====================
-    textArea.addEventListener('click', updateEditableFromTextarea);
-    textArea.addEventListener('keyup', updateEditableFromTextarea);
-    textArea.addEventListener('input', updateEditableFromTextarea);
+        valueFilter.addEventListener('input', () => {
+            selectedIndex = -1;
+            updatePreview();
+        });
 
-    // Enhanced keyboard navigation for textarea
-    textArea.addEventListener('keydown', function(e) {
-        // Handle arrow keys in textarea
-        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-            // Let the cursor move first, then update selection
-            setTimeout(() => {
-                updateEditableFromTextarea();
-            }, 10);
-        }
-    });
+        document.getElementById('filterType').addEventListener('change', updatePreview);
+        document.getElementById('sortBy').addEventListener('change', updatePreview);
 
-    shortcutFilter.addEventListener('input', () => { 
-        selectedIndex = -1; 
-        updatePreview(); 
-    });
-
-    valueFilter.addEventListener('input', () => { 
-        selectedIndex = -1; 
-        updatePreview(); 
-    });
-
-    document.getElementById('filterType').addEventListener('change', updatePreview);
-    document.getElementById('sortBy').addEventListener('change', updatePreview);
-
-    preview.addEventListener('click', e => {
-        const div = e.target.closest('div');
-        if (div) {
-            const index = parseInt(div.getAttribute('data-index'));
-            if (!isNaN(index)) {
-                selectedIndex = index;
-                updatePreview();
-                updateEditableFields();
-                // syncTextareaSelection() কল করা হচ্ছে না - ফলে টেক্সট এরিয়াতে জাম্প হবে না
-            }
-        }
-    });
-
-    function clearFilters() {
-        shortcutFilter.value = valueFilter.value = '';
-        selectedIndex = 0;
-        scrollToSelected = true;
-        updatePreview();
-        showToast("Filters cleared!", 'success');
-    }
-
-    // ==================== KEYBOARD SHORTCUTS ====================
-    window.addEventListener('keydown', e => {
-        const active = document.activeElement;
-        const isEditing = active === textArea || active === shortcutInput || active === valueInput || 
-                        active === editShortcut || active === editValue || active === batchInput;
-
-        // Global shortcuts (work everywhere)
-        if (e.ctrlKey || e.metaKey) {
-            switch(e.key.toLowerCase()) {
-                case 's': e.preventDefault(); downloadFile(); break;
-                case 'd': e.preventDefault(); removeDuplicates(); break;
-                case 'e': e.preventDefault(); removeEmptyLines(); break;
-                case 'k': e.preventDefault(); removeExtraSpaces(); break;
-                case 'l': e.preventDefault(); sortLines(); break;
-                case 'o': e.preventDefault(); fileInput.click(); break;
-            }
-        }
-
-        // Navigation in textarea with enhanced cursor tracking
-        if (active === textArea) {
-            switch(e.key) {
-                case 'ArrowDown': 
-                case 'ArrowUp':
-                    // The event listener on textarea will handle this
-                    break;
-                case 'Enter':
-                    // After pressing enter, update selection
-                    setTimeout(updateEditableFromTextarea, 10);
-                    break;
-            }
-        }
-
-        // Navigation in preview (only when not editing in inputs)
-        if (!isEditing && filteredLines.length > 0 && active !== textArea) {
-            switch(e.key) {
-                case 'ArrowDown': 
-                    e.preventDefault();
-                    selectedIndex = Math.min(selectedIndex + 1, filteredLines.length - 1);
-                    scrollToSelected = true;
+        preview.addEventListener('click', e => {
+            const div = e.target.closest('div');
+            if (div) {
+                const index = parseInt(div.getAttribute('data-index'));
+                if (!isNaN(index)) {
+                    selectedIndex = index;
                     updatePreview();
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    selectedIndex = Math.max(selectedIndex - 1, 0);
-                    scrollToSelected = true;
-                    updatePreview();
-                    break;
-                case 'Delete':
-                    e.preventDefault();
-                    deleteEntry();
-                    break;
+                    updateEditableFields();
+                    // syncTextareaSelection() কল করা হচ্ছে না - ফলে টেক্সট এরিয়াতে জাম্প হবে না
+                }
             }
+        });
+
+        function clearFilters() {
+            shortcutFilter.value = valueFilter.value = '';
+            selectedIndex = 0;
+            scrollToSelected = true;
+            updatePreview();
+            showToast("Filters cleared!", 'success');
         }
 
-        // Enter key handlers
-        if (e.key === 'Enter') {
-            if (active === shortcutInput || active === valueInput) {
+        // ==================== KEYBOARD SHORTCUTS ====================
+        window.addEventListener('keydown', e => {
+            const active = document.activeElement;
+            const isEditing = active === textArea || active === shortcutInput || active === valueInput ||
+                active === editShortcut || active === editValue || active === batchInput;
+
+            // Global shortcuts (work everywhere)
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key.toLowerCase()) {
+                    case 's': e.preventDefault(); downloadFile(); break;
+                    case 'd': e.preventDefault(); removeDuplicates(); break;
+                    case 'e': e.preventDefault(); removeEmptyLines(); break;
+                    case 'k': e.preventDefault(); removeExtraSpaces(); break;
+                    case 'l': e.preventDefault(); sortLines(); break;
+                    case 'o': e.preventDefault(); fileInput.click(); break;
+                }
+            }
+
+            // Navigation in textarea with enhanced cursor tracking
+            if (active === textArea) {
+                switch (e.key) {
+                    case 'ArrowDown':
+                    case 'ArrowUp':
+                        // The event listener on textarea will handle this
+                        break;
+                    case 'Enter':
+                        // After pressing enter, update selection
+                        setTimeout(updateEditableFromTextarea, 10);
+                        break;
+                }
+            }
+
+            // Navigation in preview (only when not editing in inputs)
+            if (!isEditing && filteredLines.length > 0 && active !== textArea) {
+                switch (e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        selectedIndex = Math.min(selectedIndex + 1, filteredLines.length - 1);
+                        scrollToSelected = true;
+                        updatePreview();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        selectedIndex = Math.max(selectedIndex - 1, 0);
+                        scrollToSelected = true;
+                        updatePreview();
+                        break;
+                    case 'Delete':
+                        e.preventDefault();
+                        deleteEntry();
+                        break;
+                }
+            }
+
+            // Enter key handlers
+            if (e.key === 'Enter') {
+                if (active === shortcutInput || active === valueInput) {
+                    e.preventDefault();
+                    addEntry();
+                } else if (active === editShortcut || active === editValue) {
+                    e.preventDefault();
+                    applyEditBtn.click();
+                }
+            }
+        });
+
+        // Enter key handlers for inputs
+        shortcutInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
                 e.preventDefault();
                 addEntry();
-            } else if (active === editShortcut || active === editValue) {
+            }
+        });
+        valueInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addEntry();
+            }
+        });
+        editShortcut.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
                 e.preventDefault();
                 applyEditBtn.click();
             }
-        }
-    });
-
-    // Enter key handlers for inputs
-    shortcutInput.addEventListener('keydown', e => { 
-        if (e.key === 'Enter') { 
-            e.preventDefault(); 
-            addEntry(); 
-        } 
-    });
-    valueInput.addEventListener('keydown', e => { 
-        if (e.key === 'Enter') { 
-            e.preventDefault(); 
-            addEntry(); 
-        } 
-    });
-    editShortcut.addEventListener('keydown', e => { 
-        if (e.key === 'Enter') { 
-            e.preventDefault(); 
-            applyEditBtn.click(); 
-        } 
-    });
-    editValue.addEventListener('keydown', e => { 
-        if (e.key === 'Enter') { 
-            e.preventDefault(); 
-            applyEditBtn.click(); 
-        } 
-    });
-
-    // ==================== DOWNLOAD FUNCTIONS ====================
-    function downloadFile() {
-        const blob = new Blob([textArea.value], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'dictionary.txt';
-        a.click();
-        URL.revokeObjectURL(url);
-        showToast("TXT file downloaded!", 'success');
-    }
-
-    function downloadZip() {
-        const zip = new JSZip();
-        zip.file("dictionary.txt", textArea.value);
-        zip.generateAsync({ type: "blob" }).then(content => {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(content);
-            a.download = "gboard_dictionary.zip";
-            a.click();
-            showToast("ZIP file downloaded!", 'success');
         });
-    }
+        editValue.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyEditBtn.click();
+            }
+        });
 
-    // ==================== INITIALIZATION ====================
-    function init() {
-        updatePreview();
-        updateSuggestions();
-        initAlphabetBar();
-        updateStatistics();
-        
-        // Load Telegram settings if exists
-        const savedToken = localStorage.getItem('telegramBotToken');
-        const savedChatId = localStorage.getItem('telegramChatId');
-        if (savedToken) document.getElementById('botToken').value = savedToken;
-        if (savedChatId) document.getElementById('chatId').value = savedChatId;
-        
-        showToast("Gboard Dictionary Pro Ready! 🚀", 'success');
-    }
+        // ==================== DOWNLOAD FUNCTIONS ====================
+        function downloadFile() {
+            const blob = new Blob([textArea.value], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'dictionary.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("TXT file downloaded!", 'success');
+        }
 
-    // Start the application
-    init();
-</script>
+        function downloadZip() {
+            const zip = new JSZip();
+            zip.file("dictionary.txt", textArea.value);
+            zip.generateAsync({ type: "blob" }).then(content => {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(content);
+                a.download = "gboard_dictionary.zip";
+                a.click();
+                showToast("ZIP file downloaded!", 'success');
+            });
+        }
+
+        // ==================== INITIALIZATION ====================
+        function init() {
+            updatePreview();
+            updateSuggestions();
+            initAlphabetBar();
+            updateStatistics();
+
+            // Load Telegram settings if exists
+            const savedToken = localStorage.getItem('telegramBotToken');
+            const savedChatId = localStorage.getItem('telegramChatId');
+            if (savedToken) document.getElementById('botToken').value = savedToken;
+            if (savedChatId) document.getElementById('chatId').value = savedChatId;
+
+            showToast("Gboard Dictionary Pro Ready! 🚀", 'success');
+        }
+
+        // Start the application
+        init();
+    </script>
 </body>
+
 </html>
