@@ -7,6 +7,41 @@
   <title>Gboard Dictionary Tool · Dark</title>
   <style>
     /* ======================================== */
+    /* CSS VARIABLES */
+    /* ======================================== */
+    :root {
+      --bg-primary: #0b0f1a;
+      --bg-secondary: #141b2b;
+      --bg-card: #101826;
+      --bg-input: #1e293b;
+      --bg-hover: #172133;
+      --border-color: #28344a;
+      --border-hover: #4b7bec;
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-highlight: #60a5fa;
+      --shortcut-color: #fcd34d;
+      --word-color: #67e8f9;
+      --comment-color: #4b5b73;
+      --btn-primary: #2563eb;
+      --btn-primary-hover: #1d4ed8;
+      --btn-success: #059669;
+      --btn-success-hover: #047857;
+      --btn-warning: #d97706;
+      --btn-warning-hover: #b45309;
+      --btn-danger: #b91c1c;
+      --btn-danger-hover: #991b1b;
+      --radius-sm: 12px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-xl: 24px;
+      --radius-full: 60px;
+      --shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.8);
+      --transition: 0.2s ease;
+    }
+
+    /* ======================================== */
     /* BASE STYLES */
     /* ======================================== */
     * {
@@ -16,71 +51,91 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: #0b0f1a;
-      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
       display: flex;
       justify-content: center;
       align-items: flex-start;
       min-height: 100vh;
-      padding: 12px 10px;
+      padding: clamp(8px, 2vw, 20px);
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
+    /* ======================================== */
+    /* CONTAINER - RESPONSIVE */
+    /* ======================================== */
     .container {
-      background: #141b2b;
-      max-width: 1000px;
+      background: var(--bg-secondary);
+      max-width: min(1000px, 95vw);
       width: 100%;
-      padding: 16px 14px;
-      border-radius: 24px;
-      box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.03);
+      padding: clamp(12px, 2.5vw, 28px);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow), 0 0 0 1px rgba(255, 255, 255, 0.03);
+      transition: var(--transition);
     }
 
+    /* ======================================== */
+    /* HEADER */
+    /* ======================================== */
     h1 {
-      font-size: 20px;
+      font-size: clamp(18px, 3vw, 28px);
       font-weight: 600;
       color: #f1f5f9;
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: clamp(6px, 1vw, 12px);
+      margin-bottom: clamp(10px, 1.5vw, 18px);
       flex-wrap: wrap;
+      letter-spacing: -0.3px;
     }
 
     h1 small {
-      font-size: 11px;
+      font-size: clamp(10px, 1.2vw, 13px);
       font-weight: 400;
-      color: #64748b;
-      background: #1e293b;
-      padding: 2px 12px;
+      color: var(--text-muted);
+      background: var(--bg-input);
+      padding: 2px clamp(10px, 1.5vw, 16px);
       border-radius: 40px;
+      border: 1px solid var(--border-color);
+    }
+
+    h1 .highlight {
+      color: var(--text-highlight);
     }
 
     /* ======================================== */
-    /* UPLOAD ROW - REDMI OPTIMIZED */
+    /* UPLOAD ROW - FULLY RESPONSIVE */
     /* ======================================== */
     .upload-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-      background: #101826;
-      padding: 8px 12px;
-      border-radius: 60px;
-      border: 1px solid #28344a;
-      margin-bottom: 14px;
-      transition: 0.2s;
+      gap: clamp(6px, 1vw, 14px);
+      background: var(--bg-card);
+      padding: clamp(6px, 1vw, 14px) clamp(10px, 1.5vw, 20px);
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-color);
+      margin-bottom: clamp(10px, 1.5vw, 18px);
+      transition: var(--transition);
       flex-wrap: wrap;
     }
 
     .upload-row:hover {
-      border-color: #4b7bec;
-      background: #172133;
+      border-color: var(--border-hover);
+      background: var(--bg-hover);
     }
 
     .upload-row .label {
-      font-size: 13px;
-      color: #94a3b8;
+      font-size: clamp(11px, 1.2vw, 15px);
+      color: var(--text-secondary);
       white-space: nowrap;
       display: flex;
       align-items: center;
@@ -89,7 +144,7 @@
 
     .upload-row .file-input-wrap {
       flex: 1;
-      min-width: 100px;
+      min-width: 80px;
       position: relative;
     }
 
@@ -104,71 +159,81 @@
     }
 
     .upload-row .file-name {
-      background: #1e293b;
-      padding: 5px 14px;
+      background: var(--bg-input);
+      padding: clamp(4px, 0.7vw, 10px) clamp(10px, 1.5vw, 20px);
       border-radius: 40px;
-      font-size: 12px;
+      font-size: clamp(10px, 1vw, 14px);
       color: #cbd5e1;
       border: 1px solid #2d3a52;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 140px;
+      max-width: clamp(80px, 15vw, 220px);
       display: inline-block;
+      min-height: clamp(28px, 3.5vw, 42px);
+      display: flex;
+      align-items: center;
     }
 
     .upload-row .file-name.placeholder {
-      color: #64748b;
+      color: var(--text-muted);
     }
 
     .upload-row .stats-badge {
       display: flex;
-      gap: 12px;
-      font-size: 11px;
-      color: #94a3b8;
+      gap: clamp(6px, 1vw, 18px);
+      font-size: clamp(10px, 1vw, 13px);
+      color: var(--text-secondary);
       background: #1a2335;
-      padding: 3px 14px;
+      padding: clamp(3px, 0.5vw, 8px) clamp(10px, 1.5vw, 20px);
       border-radius: 40px;
-      border: 1px solid #28344a;
+      border: 1px solid var(--border-color);
       white-space: nowrap;
+      min-height: clamp(28px, 3.5vw, 42px);
+      display: flex;
+      align-items: center;
     }
 
     .upload-row .stats-badge span {
-      color: #e2e8f0;
+      color: var(--text-primary);
       font-weight: 600;
     }
 
     .upload-row .stats-badge .num {
-      color: #60a5fa;
+      color: var(--text-highlight);
     }
 
     /* ======================================== */
-    /* BUTTONS - TOUCH FRIENDLY */
+    /* BUTTONS - TOUCH FRIENDLY & RESPONSIVE */
     /* ======================================== */
     .actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin: 8px 0 12px;
+      gap: clamp(4px, 0.6vw, 10px);
+      margin: clamp(6px, 1vw, 14px) 0;
     }
 
     .btn {
-      background: #1e293b;
+      background: var(--bg-input);
       border: 1px solid #2d3a52;
-      padding: 8px 14px;
+      padding: clamp(6px, 0.8vw, 14px) clamp(10px, 1.5vw, 22px);
       border-radius: 40px;
       font-weight: 500;
-      font-size: 12px;
-      color: #e2e8f0;
+      font-size: clamp(10px, 1vw, 14px);
+      color: var(--text-primary);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      transition: 0.15s;
-      min-height: 40px;
+      justify-content: center;
+      gap: clamp(3px, 0.5vw, 8px);
+      transition: var(--transition);
+      min-height: clamp(32px, 4vw, 50px);
       touch-action: manipulation;
       user-select: none;
       -webkit-user-select: none;
+      flex: 0 1 auto;
+      text-align: center;
+      line-height: 1.2;
     }
 
     .btn:active {
@@ -176,13 +241,13 @@
     }
 
     .btn-primary {
-      background: #2563eb;
-      border-color: #2563eb;
+      background: var(--btn-primary);
+      border-color: var(--btn-primary);
       color: white;
     }
 
     .btn-primary:active {
-      background: #1d4ed8;
+      background: var(--btn-primary-hover);
     }
 
     .btn-secondary {
@@ -195,33 +260,33 @@
     }
 
     .btn-success {
-      background: #059669;
-      border-color: #059669;
+      background: var(--btn-success);
+      border-color: var(--btn-success);
       color: white;
     }
 
     .btn-success:active {
-      background: #047857;
+      background: var(--btn-success-hover);
     }
 
     .btn-warning {
-      background: #d97706;
-      border-color: #d97706;
+      background: var(--btn-warning);
+      border-color: var(--btn-warning);
       color: white;
     }
 
     .btn-warning:active {
-      background: #b45309;
+      background: var(--btn-warning-hover);
     }
 
     .btn-danger {
-      background: #b91c1c;
-      border-color: #b91c1c;
+      background: var(--btn-danger);
+      border-color: var(--btn-danger);
       color: white;
     }
 
     .btn-danger:active {
-      background: #991b1b;
+      background: var(--btn-danger-hover);
     }
 
     .btn:disabled {
@@ -230,10 +295,32 @@
     }
 
     /* ======================================== */
-    /* PREVIEW - SCROLLABLE */
+    /* EXTRA ACTIONS ROW */
+    /* ======================================== */
+    .actions-extra {
+      margin-top: -2px;
+      border-top: 1px solid #1e2a3d;
+      padding-top: clamp(6px, 1vw, 14px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: clamp(4px, 0.6vw, 10px);
+    }
+
+    .actions-extra .label {
+      font-size: clamp(10px, 0.9vw, 13px);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    /* ======================================== */
+    /* PREVIEW - SCROLLABLE & RESPONSIVE */
     /* ======================================== */
     .preview-wrap {
-      border-radius: 18px;
+      border-radius: var(--radius-md);
       padding: 3px;
       background: #0b111f;
       border: 1px solid #1e2a3d;
@@ -242,22 +329,22 @@
     .preview {
       background: #0b111f;
       color: #d1d9e6;
-      border-radius: 16px;
-      padding: 14px 16px;
-      font-family: 'Cascadia Code', 'Fira Code', monospace;
-      font-size: 12px;
+      border-radius: calc(var(--radius-md) - 3px);
+      padding: clamp(10px, 1.5vw, 20px) clamp(12px, 1.8vw, 24px);
+      font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+      font-size: clamp(10px, 1vw, 14px);
       white-space: pre-wrap;
       word-break: break-all;
-      max-height: 350px;
+      max-height: clamp(200px, 40vh, 450px);
       overflow-y: auto;
-      line-height: 1.7;
+      line-height: clamp(1.5, 1.8, 2);
       scrollbar-width: thin;
       scrollbar-color: #2d3a52 #0b111f;
       -webkit-overflow-scrolling: touch;
     }
 
     .preview::-webkit-scrollbar {
-      width: 4px;
+      width: clamp(3px, 0.4vw, 6px);
     }
 
     .preview::-webkit-scrollbar-track {
@@ -270,12 +357,12 @@
     }
 
     .preview .hl-shortcut {
-      color: #fcd34d;
+      color: var(--shortcut-color);
       font-weight: 600;
     }
 
     .preview .hl-word {
-      color: #67e8f9;
+      color: var(--word-color);
     }
 
     .preview .hl-meta {
@@ -283,7 +370,7 @@
     }
 
     .preview .hl-comment {
-      color: #4b5b73;
+      color: var(--comment-color);
       font-style: italic;
     }
 
@@ -294,13 +381,17 @@
       padding: 0 4px;
     }
 
+    /* ======================================== */
+    /* FOOTER */
+    /* ======================================== */
     .footer {
-      margin-top: 14px;
-      font-size: 11px;
+      margin-top: clamp(10px, 1.5vw, 18px);
+      font-size: clamp(9px, 0.9vw, 13px);
       color: #4b5b73;
       text-align: center;
       border-top: 1px solid #1e2a3d;
-      padding-top: 10px;
+      padding-top: clamp(8px, 1vw, 14px);
+      line-height: 1.6;
     }
 
     .footer strong {
@@ -312,22 +403,30 @@
     /* ======================================== */
     .toast {
       position: fixed;
-      bottom: 30px;
+      bottom: clamp(20px, 4vw, 50px);
       left: 50%;
       transform: translateX(-50%);
-      background: #1e293b;
+      background: var(--bg-input);
       border: 1px solid #3b4a66;
-      padding: 10px 20px;
+      padding: clamp(8px, 1vw, 16px) clamp(16px, 2.5vw, 32px);
       border-radius: 40px;
-      font-size: 13px;
-      color: #e2e8f0;
+      font-size: clamp(11px, 1.1vw, 15px);
+      color: var(--text-primary);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.3s ease;
       pointer-events: none;
       z-index: 999;
-      max-width: 90%;
+      max-width: min(92%, 500px);
       text-align: center;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 480px) {
+      .toast {
+        white-space: normal;
+        max-width: 95%;
+      }
     }
 
     .toast.show {
@@ -335,16 +434,46 @@
     }
 
     /* ======================================== */
-    /* REDMI NOTE 15 5G SPECIFIC (1080x2400)   */
+    /* DELL LATITUDE E5450 (1366x768) OPTIMIZATION */
     /* ======================================== */
-    @media (max-width: 1080px) {
+    @media (min-width: 1025px) and (max-width: 1440px) {
+      .container {
+        max-width: min(900px, 85vw);
+        padding: 20px 24px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        font-size: 13px;
+        min-height: 38px;
+      }
+
+      .preview {
+        max-height: 380px;
+        font-size: 13px;
+        padding: 14px 18px;
+      }
+
+      .upload-row .file-name {
+        max-width: 180px;
+      }
+    }
+
+    /* ======================================== */
+    /* REDMI NOTE 15 5G (1080x2400) OPTIMIZATION */
+    /* ======================================== */
+    @media (min-width: 768px) and (max-width: 1080px) {
       html {
-        font-size: 16px;
+        font-size: 17px;
       }
 
       .container {
-        padding: 14px 12px;
-        border-radius: 20px;
+        padding: 16px 18px;
+        border-radius: var(--radius-lg);
       }
 
       h1 {
@@ -359,7 +488,7 @@
       }
 
       .upload-row {
-        padding: 10px 14px;
+        padding: 10px 16px;
         gap: 10px;
         border-radius: 50px;
       }
@@ -372,14 +501,14 @@
         font-size: 13px;
         padding: 6px 16px;
         max-width: 160px;
-        min-height: 36px;
+        min-height: 38px;
       }
 
       .upload-row .stats-badge {
         font-size: 12px;
         padding: 4px 16px;
         gap: 14px;
-        min-height: 36px;
+        min-height: 38px;
       }
 
       .btn {
@@ -398,7 +527,7 @@
       .preview {
         font-size: 13px;
         padding: 16px 18px;
-        max-height: 380px;
+        max-height: 350px;
         line-height: 1.8;
       }
 
@@ -417,20 +546,59 @@
     }
 
     /* ======================================== */
-    /* SMALL SCREENS (480px and below)          */
+    /* TABLET & SMALL LAPTOP (768px - 1024px) */
     /* ======================================== */
-    @media (max-width: 480px) {
-      body {
-        padding: 8px 6px;
-      }
-
+    @media (min-width: 481px) and (max-width: 767px) {
       .container {
-        padding: 12px 10px;
-        border-radius: 16px;
+        padding: 14px 16px;
+        border-radius: var(--radius-lg);
       }
 
       h1 {
-        font-size: 18px;
+        font-size: 20px;
+        gap: 8px;
+      }
+
+      .upload-row {
+        padding: 8px 14px;
+        gap: 8px;
+        border-radius: 50px;
+      }
+
+      .btn {
+        padding: 8px 14px;
+        font-size: 12px;
+        min-height: 38px;
+      }
+
+      .actions .btn {
+        flex: 1 0 calc(33.33% - 8px);
+        min-width: 70px;
+      }
+
+      .preview {
+        max-height: 300px;
+        font-size: 12px;
+        padding: 14px 16px;
+      }
+    }
+
+    /* ======================================== */
+    /* MOBILE PHONES (480px and below) */
+    /* ======================================== */
+    @media (max-width: 480px) {
+      body {
+        padding: 6px 4px;
+      }
+
+      .container {
+        padding: 10px 10px;
+        border-radius: var(--radius-md);
+        max-width: 100%;
+      }
+
+      h1 {
+        font-size: 17px;
         gap: 6px;
         margin-bottom: 10px;
       }
@@ -454,14 +622,14 @@
       }
 
       .upload-row .file-input-wrap {
-        min-width: 80px;
-        flex: 1 1 120px;
+        min-width: 70px;
+        flex: 1 1 100px;
       }
 
       .upload-row .file-name {
         font-size: 11px;
         padding: 4px 12px;
-        max-width: 100px;
+        max-width: 90px;
         min-height: 30px;
       }
 
@@ -473,8 +641,8 @@
       }
 
       .btn {
-        padding: 6px 12px;
-        font-size: 11px;
+        padding: 6px 10px;
+        font-size: 10px;
         min-height: 34px;
         border-radius: 34px;
         gap: 3px;
@@ -489,52 +657,68 @@
 
       .actions .btn {
         flex: 1 0 calc(50% - 6px);
-        min-width: 60px;
+        min-width: 55px;
+        font-size: 10px;
+        padding: 5px 8px;
+      }
+
+      .actions-extra {
+        gap: 4px;
+        padding-top: 8px;
+      }
+
+      .actions-extra .btn {
+        flex: 1 0 calc(50% - 4px);
+        min-width: 50px;
+        font-size: 9px;
+        padding: 4px 6px;
+        min-height: 30px;
       }
 
       .preview {
-        font-size: 11px;
-        padding: 12px 14px;
-        max-height: 280px;
+        font-size: 10px;
+        padding: 10px 12px;
+        max-height: 250px;
         line-height: 1.6;
       }
 
       .footer {
-        font-size: 10px;
-        padding-top: 10px;
-        margin-top: 12px;
+        font-size: 9px;
+        padding-top: 8px;
+        margin-top: 10px;
       }
 
       .toast {
-        font-size: 12px;
-        padding: 8px 16px;
-        bottom: 30px;
-        border-radius: 34px;
-        max-width: 92%;
+        font-size: 11px;
+        padding: 6px 14px;
+        bottom: 20px;
+        border-radius: 30px;
+        max-width: 95%;
+        white-space: normal;
       }
     }
 
     /* ======================================== */
-    /* VERY SMALL (320px and below)             */
+    /* VERY SMALL (360px and below) */
     /* ======================================== */
     @media (max-width: 360px) {
       body {
-        padding: 4px;
+        padding: 4px 2px;
       }
 
       .container {
         padding: 8px 6px;
-        border-radius: 12px;
+        border-radius: var(--radius-sm);
       }
 
       h1 {
-        font-size: 15px;
+        font-size: 14px;
         gap: 4px;
         margin-bottom: 8px;
       }
 
       h1 small {
-        font-size: 9px;
+        font-size: 8px;
         padding: 1px 8px;
       }
 
@@ -549,61 +733,71 @@
       }
 
       .upload-row .file-name {
-        font-size: 10px;
+        font-size: 9px;
         padding: 3px 8px;
-        max-width: 70px;
+        max-width: 60px;
         min-height: 26px;
       }
 
       .upload-row .stats-badge {
-        font-size: 9px;
-        padding: 2px 8px;
+        font-size: 8px;
+        padding: 2px 6px;
         gap: 4px;
         min-height: 26px;
       }
 
       .btn {
-        padding: 4px 8px;
-        font-size: 10px;
+        padding: 4px 6px;
+        font-size: 9px;
         min-height: 28px;
         border-radius: 28px;
         gap: 2px;
       }
 
       .actions {
-        gap: 4px;
-        margin: 4px 0 8px;
+        gap: 3px;
+        margin: 4px 0 6px;
       }
 
       .actions .btn {
         flex: 1 0 calc(50% - 4px);
-        min-width: 50px;
+        min-width: 45px;
+        font-size: 9px;
+        padding: 4px 6px;
+      }
+
+      .actions-extra .btn {
+        flex: 1 0 calc(50% - 3px);
+        min-width: 40px;
+        font-size: 8px;
+        padding: 3px 5px;
+        min-height: 26px;
       }
 
       .preview {
-        font-size: 10px;
+        font-size: 9px;
         padding: 8px 10px;
-        max-height: 220px;
+        max-height: 200px;
         line-height: 1.5;
       }
 
       .footer {
-        font-size: 9px;
-        padding-top: 8px;
-        margin-top: 10px;
+        font-size: 8px;
+        padding-top: 6px;
+        margin-top: 8px;
       }
 
       .toast {
-        font-size: 11px;
-        padding: 6px 12px;
-        bottom: 20px;
-        border-radius: 28px;
-        max-width: 95%;
+        font-size: 10px;
+        padding: 5px 10px;
+        bottom: 15px;
+        border-radius: 24px;
+        max-width: 98%;
       }
     }
 
     /* ======================================== */
-    /* TOUCH DEVICE OPTIMIZATIONS               */
+    /* TOUCH DEVICE OPTIMIZATIONS */
     /* ======================================== */
     @media (hover: none) and (pointer: coarse) {
 
@@ -622,12 +816,21 @@
       }
 
       .preview div:active {
-        background: rgba(37, 99, 235, 0.15);
+        background: rgba(37, 99, 235, 0.1);
+      }
+
+      .btn {
+        min-height: 44px;
+      }
+
+      .upload-row .file-name,
+      .upload-row .stats-badge {
+        min-height: 36px;
       }
     }
 
     /* ======================================== */
-    /* LANDSCAPE MODE                          */
+    /* LANDSCAPE MODE */
     /* ======================================== */
     @media (max-height: 500px) and (orientation: landscape) {
       body {
@@ -636,7 +839,7 @@
 
       .container {
         padding: 8px 12px;
-        border-radius: 14px;
+        border-radius: var(--radius-md);
       }
 
       h1 {
@@ -647,11 +850,23 @@
       .upload-row {
         padding: 4px 10px;
         margin-bottom: 6px;
+        gap: 6px;
+      }
+
+      .upload-row .file-name {
+        max-width: 100px;
+        min-height: 28px;
+      }
+
+      .upload-row .stats-badge {
+        min-height: 28px;
+        font-size: 10px;
       }
 
       .preview {
-        max-height: 180px;
+        max-height: 160px;
         padding: 10px 14px;
+        font-size: 11px;
       }
 
       .btn {
@@ -661,24 +876,30 @@
       }
 
       .actions {
-        margin: 4px 0 8px;
+        margin: 4px 0 6px;
         gap: 4px;
       }
 
+      .actions .btn {
+        flex: 0 1 auto;
+        min-width: 50px;
+      }
+
       .footer {
-        margin-top: 8px;
-        padding-top: 6px;
+        margin-top: 6px;
+        padding-top: 4px;
+        font-size: 9px;
       }
 
       .toast {
-        bottom: 15px;
-        padding: 6px 14px;
-        font-size: 11px;
+        bottom: 12px;
+        padding: 4px 12px;
+        font-size: 10px;
       }
     }
 
     /* ======================================== */
-    /* SAFE AREA (Notch/Punch Hole)            */
+    /* SAFE AREA (Notch/Punch Hole) */
     /* ======================================== */
     @supports (padding-top: env(safe-area-inset-top)) {
       body {
@@ -689,12 +910,12 @@
       }
 
       .toast {
-        bottom: max(30px, env(safe-area-inset-bottom));
+        bottom: max(20px, env(safe-area-inset-bottom));
       }
     }
 
     /* ======================================== */
-    /* REDUCED MOTION                          */
+    /* REDUCED MOTION */
     /* ======================================== */
     @media (prefers-reduced-motion: reduce) {
       * {
@@ -704,11 +925,44 @@
     }
 
     /* ======================================== */
-    /* SCROLLBAR FOR PREVIEW (Firefox)         */
+    /* PRINT STYLES */
     /* ======================================== */
-    .preview {
-      scrollbar-width: thin;
-      scrollbar-color: #2d3a52 #0b111f;
+    @media print {
+      .upload-row,
+      .actions,
+      .actions-extra,
+      .toast {
+        display: none !important;
+      }
+
+      .container {
+        box-shadow: none !important;
+        border: 1px solid #333;
+      }
+
+      .preview {
+        max-height: none !important;
+        overflow: visible !important;
+      }
+    }
+
+    /* ======================================== */
+    /* HIGH CONTRAST MODE */
+    /* ======================================== */
+    @media (prefers-contrast: high) {
+      :root {
+        --border-color: #4a5a7a;
+        --text-primary: #ffffff;
+        --text-secondary: #c0d0e0;
+      }
+
+      .btn {
+        border-width: 2px;
+      }
+
+      .preview {
+        border: 1px solid #4a5a7a;
+      }
     }
   </style>
 </head>
@@ -717,7 +971,7 @@
 
   <div class="container">
     <h1>
-      🌙 Gboard <span style="color:#60a5fa;">Tool</span>
+      🌙 Gboard <span class="highlight">Tool</span>
       <small>Dark</small>
     </h1>
 
@@ -745,10 +999,8 @@
     </div>
 
     <!-- Extra formatting options -->
-    <div class="actions" style="margin-top: -2px; border-top: 1px solid #1e2a3d; padding-top: 10px;">
-      <span style="font-size:12px; color:#64748b; display:flex; align-items:center; gap:4px;">
-        ⚙️ Extra:
-      </span>
+    <div class="actions-extra">
+      <span class="label">⚙️ Extra:</span>
       <button class="btn btn-secondary" id="trimSpacesBtn" disabled>✂️ Trim Spaces</button>
       <button class="btn btn-secondary" id="removeDuplicatesBtn" disabled>🧹 Remove Duplicates</button>
       <button class="btn btn-secondary" id="sortEntriesBtn" disabled>🔤 Sort</button>
@@ -762,7 +1014,7 @@
       </div>
     </div>
     <div class="footer">
-      ⚡ <strong>Shortcut</strong> &amp; <strong>Word</strong> — case conversion only · everything else unchanged
+      ⚡ <strong>Only Word</strong> — case conversion applies · <strong>Shortcut</strong> remains unchanged · <strong>Formatting</strong> preserved
     </div>
   </div>
 
@@ -771,8 +1023,8 @@
 
   <script>
     (function() {
-      // DOM
-      const fileInput = document.getElementById('fileInput');
+      // DOM Elements
+      let fileInput = document.getElementById('fileInput');
       const fileNameDisplay = document.getElementById('fileNameDisplay');
       const shortcutCount = document.getElementById('shortcutCount');
       const entryCount = document.getElementById('entryCount');
@@ -792,57 +1044,109 @@
 
       const toast = document.getElementById('toast');
 
+      // State
       let originalLines = [];
       let currentLines = [];
       let currentCaseMode = 'original';
       let fileLoaded = false;
       let fileName = '';
 
-      // ---------- helpers ----------
-      function showToast(msg, duration = 2000) {
-        toast.textContent = msg;
-        toast.classList.add('show');
-        clearTimeout(toast._timer);
-        toast._timer = setTimeout(() => toast.classList.remove('show'), duration);
+      // ---------- Helper Functions ----------
+
+      function escapeHtml(str) {
+        const map = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        };
+        return String(str).replace(/[&<>"']/g, function(m) { return map[m]; });
       }
 
+      function showToast(msg, duration = 2000) {
+        if (toast._timer) {
+          clearTimeout(toast._timer);
+          toast._timer = null;
+        }
+        toast.textContent = msg;
+        toast.classList.add('show');
+        toast._timer = setTimeout(() => {
+          toast.classList.remove('show');
+          toast._timer = null;
+        }, duration);
+      }
+
+      // ============================================
+      // applyCase - Only WORD case changes
+      // ============================================
       function applyCase(shortcut, word, mode) {
-        if (mode === 'upper') return { shortcut: shortcut.toUpperCase(), word: word.toUpperCase() };
-        if (mode === 'lower') return { shortcut: shortcut.toLowerCase(), word: word.toLowerCase() };
+        if (mode === 'upper') {
+          return {
+            shortcut: shortcut,
+            word: word.toUpperCase()
+          };
+        }
+        if (mode === 'lower') {
+          return {
+            shortcut: shortcut,
+            word: word.toLowerCase()
+          };
+        }
         if (mode === 'title') {
           return {
-            shortcut: shortcut.replace(/\b\w/g, c => c.toUpperCase()),
+            shortcut: shortcut,
             word: word.replace(/\b\w/g, c => c.toUpperCase())
           };
         }
         return { shortcut, word };
       }
 
-      function parseEntry(line) {
-        const trimmed = line.trim();
-        if (trimmed.startsWith('#') || trimmed === '') return null;
-        const parts = trimmed.split('\t');
-        if (parts.length < 2) return null;
-        return {
-          shortcut: parts[0] || '',
-          word: parts[1] || '',
-          lang: parts[2] || '',
-          pos: parts[3] || '',
-          raw: line
-        };
-      }
-
-      function rebuildLine(entry) {
-        return [entry.shortcut, entry.word, entry.lang, entry.pos].join('\t');
-      }
-
+      // ============================================
+      // processLines - Preserves formatting + Only Word case change
+      // ============================================
       function processLines(lines, mode) {
         const newLines = [];
         let sc = 0,
           en = 0;
         for (let line of lines) {
+          const originalEnding = line.match(/\s*$/)?.[0] || '';
           const trimmed = line.trim();
-          if (trimmed.startsWith('#') || trimmed === '') {
+
+          if (trimmed.startsWith('#') || trimmed === '' || trimmed.startsWith('//')) {
+            newLines.push(line);
+            continue;
+          }
+
+          const parts = trimmed.split('\t');
+          if (parts.length < 2) {
+            newLines.push(line);
+            continue;
+          }
+
+          const shortcutRaw = parts[0] || '';
+          const wordRaw = parts[1] || '';
+          const lang = parts[2] || '';
+          const pos = parts[3] || '';
+
+          const converted = applyCase(shortcutRaw, wordRaw, mode);
+          const newLine = [converted.shortcut, converted.word, lang, pos].join('\t') + originalEnding;
+          newLines.push(newLine);
+          sc++;
+          en++;
+        }
+        return { lines: newLines, shortcutCount: sc, entryCount: en };
+      }
+
+      // ============================================
+      // trimSpaces - Preserves formatting
+      // ============================================
+      function trimSpaces(lines) {
+        const newLines = [];
+        for (let line of lines) {
+          const originalEnding = line.match(/\s*$/)?.[0] || '';
+          const trimmed = line.trim();
+          if (trimmed.startsWith('#') || trimmed === '' || trimmed.startsWith('//')) {
             newLines.push(line);
             continue;
           }
@@ -851,18 +1155,80 @@
             newLines.push(line);
             continue;
           }
-          const shortcutRaw = parts[0] || '';
-          const wordRaw = parts[1] || '';
-          const lang = parts[2] || '';
-          const pos = parts[3] || '';
-
-          const converted = applyCase(shortcutRaw, wordRaw, mode);
-          const newLine = [converted.shortcut, converted.word, lang, pos].join('\t');
-          newLines.push(newLine);
-          sc++;
-          en++;
+          parts[0] = parts[0].trim();
+          parts[1] = parts[1].trim();
+          newLines.push(parts.join('\t') + originalEnding);
         }
-        return { lines: newLines, shortcutCount: sc, entryCount: en };
+        return newLines;
+      }
+
+      // ============================================
+      // removeDuplicates - Preserves formatting
+      // ============================================
+      function removeDuplicates(lines) {
+        const seen = new Set();
+        const newLines = [];
+        for (let line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('#') || trimmed === '' || trimmed.startsWith('//')) {
+            newLines.push(line);
+            continue;
+          }
+          const parts = trimmed.split('\t');
+          if (parts.length < 2) {
+            newLines.push(line);
+            continue;
+          }
+          const key = parts[0] + '|' + parts[1];
+          if (!seen.has(key)) {
+            seen.add(key);
+            newLines.push(line);
+          }
+        }
+        return newLines;
+      }
+
+      // ============================================
+      // sortEntries - Preserves formatting
+      // ============================================
+      function sortEntries(lines) {
+        const headers = [];
+        const entries = [];
+        for (let line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('#') || trimmed === '' || trimmed.startsWith('//')) {
+            headers.push(line);
+            continue;
+          }
+          entries.push(line);
+        }
+        entries.sort((a, b) => {
+          const aParts = a.trim().split('\t');
+          const bParts = b.trim().split('\t');
+          const aKey = (aParts[0] || '').toLowerCase();
+          const bKey = (bParts[0] || '').toLowerCase();
+          return aKey.localeCompare(bKey);
+        });
+        return [...headers, ...entries];
+      }
+
+      // ============================================
+      // cleanExport - Preserves formatting
+      // ============================================
+      function cleanExport(lines) {
+        const newLines = [];
+        for (let line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('#') || trimmed === '' || trimmed.startsWith('//')) {
+            newLines.push(line);
+            continue;
+          }
+          const parts = trimmed.split('\t');
+          if (parts.length >= 2 && parts[0] && parts[1]) {
+            newLines.push(line);
+          }
+        }
+        return newLines;
       }
 
       function countEntries(lines) {
@@ -870,7 +1236,7 @@
           en = 0;
         for (let line of lines) {
           const trimmed = line.trim();
-          if (trimmed.startsWith('#') || trimmed === '') continue;
+          if (trimmed.startsWith('#') || trimmed === '' || trimmed.startsWith('//')) continue;
           const parts = trimmed.split('\t');
           if (parts.length >= 2) {
             sc++;
@@ -878,12 +1244,6 @@
           }
         }
         return { shortcutCount: sc, entryCount: en };
-      }
-
-      function escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
       }
 
       function updateUI(lines, mode, stats) {
@@ -899,7 +1259,7 @@
           en = 0;
         for (let line of lines) {
           const trimmed = line.trim();
-          if (trimmed.startsWith('#') || trimmed === '') {
+          if (trimmed.startsWith('#') || trimmed === '' || trimmed.startsWith('//')) {
             html += `<span class="hl-comment">${escapeHtml(line)}</span>\n`;
             continue;
           }
@@ -929,88 +1289,7 @@
         }
       }
 
-      // ----- extra functions -----
-      function trimSpaces(lines) {
-        const newLines = [];
-        for (let line of lines) {
-          const trimmed = line.trim();
-          if (trimmed.startsWith('#') || trimmed === '') {
-            newLines.push(line);
-            continue;
-          }
-          const parts = trimmed.split('\t');
-          if (parts.length < 2) {
-            newLines.push(line);
-            continue;
-          }
-          parts[0] = parts[0].trim();
-          parts[1] = parts[1].trim();
-          newLines.push(parts.join('\t'));
-        }
-        return newLines;
-      }
-
-      function removeDuplicates(lines) {
-        const seen = new Set();
-        const newLines = [];
-        for (let line of lines) {
-          const trimmed = line.trim();
-          if (trimmed.startsWith('#') || trimmed === '') {
-            newLines.push(line);
-            continue;
-          }
-          const parts = trimmed.split('\t');
-          if (parts.length < 2) {
-            newLines.push(line);
-            continue;
-          }
-          const key = parts[0] + '|' + parts[1];
-          if (!seen.has(key)) {
-            seen.add(key);
-            newLines.push(line);
-          }
-        }
-        return newLines;
-      }
-
-      function sortEntries(lines) {
-        const headers = [];
-        const entries = [];
-        for (let line of lines) {
-          const trimmed = line.trim();
-          if (trimmed.startsWith('#') || trimmed === '') {
-            headers.push(line);
-            continue;
-          }
-          entries.push(line);
-        }
-        entries.sort((a, b) => {
-          const aParts = a.split('\t');
-          const bParts = b.split('\t');
-          const aKey = (aParts[0] || '').toLowerCase();
-          const bKey = (bParts[0] || '').toLowerCase();
-          return aKey.localeCompare(bKey);
-        });
-        return [...headers, ...entries];
-      }
-
-      function cleanExport(lines) {
-        const newLines = [];
-        for (let line of lines) {
-          const trimmed = line.trim();
-          if (trimmed.startsWith('#') || trimmed === '') {
-            newLines.push(line);
-            continue;
-          }
-          const parts = trimmed.split('\t');
-          if (parts.length >= 2 && parts[0] && parts[1]) {
-            newLines.push(line);
-          }
-        }
-        return newLines;
-      }
-
-      // ----- apply operation & update -----
+      // ----- Apply Operation & Update -----
       function applyOperation(operation, label) {
         if (!fileLoaded || !currentLines.length) {
           showToast('⚠️ Please upload a file first');
@@ -1025,9 +1304,12 @@
         showToast(`✅ ${label} completed!`);
       }
 
-      // load file
+      // Load File
       function loadFileContent(text, filename) {
         const lines = text.split(/\r?\n/);
+        if (lines.length > 0 && lines[lines.length - 1] === '') {
+          lines.pop();
+        }
         originalLines = lines.slice();
         currentLines = lines.slice();
         fileName = filename || 'dictionary.txt';
@@ -1060,7 +1342,7 @@
         reader.readAsText(file, 'UTF-8');
       }
 
-      // convert helper
+      // Convert Helper
       function convertTo(mode, label) {
         if (!fileLoaded || !originalLines.length) {
           showToast('⚠️ Please upload a file first');
@@ -1072,24 +1354,29 @@
         updateUI(currentLines, mode, { shortcutCount: result.shortcutCount, entryCount: result.entryCount });
         shortcutCount.textContent = result.shortcutCount;
         entryCount.textContent = result.entryCount;
-        showToast(`✅ ${label} applied`);
+        showToast(`✅ ${label} applied (Word only)`);
       }
 
-      // ---------- events ----------
-      fileInput.addEventListener('change', (e) => {
-        if (fileInput.files.length > 0) {
-          handleFile(fileInput.files[0]);
-        }
-        fileInput.value = '';
-      });
+      // ---------- Event Listeners ----------
 
+      function setupFileInput() {
+        fileInput.addEventListener('change', (e) => {
+          if (fileInput.files.length > 0) {
+            handleFile(fileInput.files[0]);
+            fileInput.value = '';
+          }
+        });
+      }
+      setupFileInput();
+
+      // Drag and Drop
       document.querySelector('.container').addEventListener('dragover', (e) => e.preventDefault());
       document.querySelector('.container').addEventListener('drop', (e) => {
         e.preventDefault();
         const files = e.dataTransfer.files;
         if (files.length > 0) {
           const file = files[0];
-          if (file.name.endsWith('.txt')) {
+          if (file.type === 'text/plain' || file.name.toLowerCase().endsWith('.txt')) {
             handleFile(file);
           } else {
             showToast('⚠️ Only .txt files are supported', 2500);
@@ -1097,13 +1384,15 @@
         }
       });
 
-      // ----- button events -----
+      // Button Events
       convertUpperBtn.addEventListener('click', () => convertTo('upper', 'UPPER'));
       convertLowerBtn.addEventListener('click', () => convertTo('lower', 'lower'));
+
       swapCaseBtn.addEventListener('click', () => {
-        const nextMode = (currentCaseMode === 'upper') ? 'lower' : 'upper';
+        const nextMode = (currentCaseMode === 'upper' || currentCaseMode === 'title') ? 'lower' : 'upper';
         convertTo(nextMode, nextMode === 'upper' ? 'UPPER' : 'lower');
       });
+
       titleCaseBtn.addEventListener('click', () => convertTo('title', 'Title Case'));
 
       trimSpacesBtn.addEventListener('click', () => applyOperation(trimSpaces, 'Trim Spaces'));
@@ -1121,8 +1410,8 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        const baseName = fileName.replace(/\.txt$/, '') || 'dictionary';
-        a.download = `${baseName}_converted.txt`;
+        const baseName = fileName.endsWith('.txt') ? fileName.slice(0, -4) : fileName;
+        a.download = `${baseName || 'dictionary'}_converted.txt`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1141,16 +1430,22 @@
         shortcutCount.textContent = '0';
         entryCount.textContent = '0';
         previewArea.innerHTML = `<span class="hl-meta"># Upload a file to preview</span>`;
+
         [convertUpperBtn, convertLowerBtn, swapCaseBtn, titleCaseBtn, downloadBtn,
           trimSpacesBtn, removeDuplicatesBtn, sortEntriesBtn, exportCleanBtn
         ].forEach(btn => {
           btn.disabled = true;
         });
-        fileInput.value = '';
+
+        const newFileInput = fileInput.cloneNode(true);
+        fileInput.parentNode.replaceChild(newFileInput, fileInput);
+        fileInput = newFileInput;
+        setupFileInput();
+
         showToast('🔄 Reset completed');
       });
 
-      // init
+      // Initialization
       [convertUpperBtn, convertLowerBtn, swapCaseBtn, titleCaseBtn, downloadBtn,
         trimSpacesBtn, removeDuplicatesBtn, sortEntriesBtn, exportCleanBtn
       ].forEach(btn => {
@@ -1158,8 +1453,6 @@
       });
       fileNameDisplay.classList.add('placeholder');
 
-      window.addEventListener('dragover', (e) => e.preventDefault());
-      window.addEventListener('drop', (e) => e.preventDefault());
     })();
   </script>
 </body>
